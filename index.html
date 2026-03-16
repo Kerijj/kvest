@@ -2,192 +2,206 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>TERMINAL: CASE 77-B | DEEP INVESTIGATION</title>
+    <title>CENTRAL INTELLIGENCE: CASE #77-B</title>
     <style>
-        :root { --gold: #c2b280; --bg: #050505; --panel: #111; --text: #a19a86; --red: #ff3333; --cyan: #00ffff; }
+        :root { --gold: #c2b280; --bg: #030303; --border: #222; --text: #8e8775; --alert: #ff0000; --active: #00ffff; }
         body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        #case-file { max-width: 1300px; width: 100%; background: #0a0a0a; border: 1px solid #222; min-height: 95vh; padding: 30px; position: relative; }
         
-        header { border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 25px; display: flex; justify-content: space-between; }
-        .main-layout { display: grid; grid-template-columns: 1fr 420px; gap: 40px; }
-
-        #display { background: #000; border: 1px solid #1a1a1a; padding: 25px; min-height: 400px; line-height: 1.6; border-left: 2px solid var(--gold); }
+        #main-frame { max-width: 1400px; width: 100%; background: #080808; border: 1px solid var(--border); min-height: 90vh; padding: 40px; box-sizing: border-box; }
+        header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
+        
+        .grid-system { display: grid; grid-template-columns: 1fr 450px; gap: 50px; }
+        
+        #terminal-display { background: #000; border: 1px solid #111; padding: 30px; min-height: 450px; position: relative; border-left: 3px solid #333; overflow-y: auto; }
         .highlight { color: var(--gold); font-weight: bold; }
-        .system-err { color: var(--red); font-size: 0.8em; }
-
-        .module-box { background: #0d0d0d; border: 1px solid #222; padding: 25px; margin: 15px 0; display: none; }
-        .terminal-input { background: #000; border: 1px solid #333; color: var(--gold); padding: 12px; font-family: inherit; width: 280px; text-align: center; font-size: 1.2em; margin-bottom: 15px; }
         
-        /* Сетка склада */
-        .cargo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; }
-        .cargo-box { background: #111; border: 1px solid #222; padding: 10px; text-align: center; cursor: pointer; font-size: 0.7em; transition: 0.3s; }
-        .cargo-box:hover { border-color: var(--gold); background: #1a1a1a; }
-        .cargo-box.active { border-color: var(--cyan); color: var(--cyan); }
-
-        .actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
-        button { background: #0a0a0a; color: #555; border: 1px solid #222; padding: 15px; cursor: pointer; text-transform: uppercase; font-size: 0.7em; letter-spacing: 2px; }
-        button:hover:not(:disabled) { border-color: var(--gold); color: #fff; }
-        button:disabled { opacity: 0.1; }
-
-        .side-panel { background: #0d0d0d; padding: 20px; border: 1px solid #1a1a1a; }
-        .dossier-card { background: #0a0a0a; padding: 12px; border: 1px solid #222; margin-bottom: 12px; cursor: pointer; font-size: 0.85em; }
-        .dossier-card:hover { border-color: #444; }
-        .clue-tag { background: #000; border: 1px solid #333; color: var(--gold); padding: 5px 10px; font-size: 0.7em; display: inline-block; margin: 3px; }
+        .module-box { display: none; margin-top: 25px; padding: 20px; border: 1px solid #1a1a1a; background: #0a0a0a; }
+        .input-line { background: #000; border: 1px solid #333; color: var(--gold); padding: 15px; width: 300px; font-family: inherit; font-size: 1.2em; text-align: center; outline: none; margin: 10px 0; }
         
-        .hidden { display: none !important; }
+        .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 30px; }
+        button { background: #0d0d0d; border: 1px solid #222; color: #555; padding: 18px; cursor: pointer; text-transform: uppercase; font-size: 0.75em; letter-spacing: 2px; transition: 0.3s; }
+        button:hover:not(:disabled) { border-color: var(--gold); color: #fff; background: #111; }
+        button:disabled { opacity: 0.05; }
+        
+        .side-bar { background: #0a0a0a; padding: 25px; border: 1px solid #151515; }
+        .card { border: 1px solid #222; padding: 15px; margin-bottom: 15px; cursor: pointer; font-size: 0.8em; line-height: 1.4; }
+        .card:hover { background: #111; border-color: #444; }
+        .clue-item { display: inline-block; border: 1px solid #333; padding: 5px 10px; margin: 5px; font-size: 0.7em; color: var(--gold); }
+        
+        #timer { font-size: 2em; color: var(--alert); letter-spacing: 2px; }
+        .cargo-cell { border: 1px solid #222; padding: 10px; text-align: center; cursor: pointer; font-size: 0.7em; }
+        .cargo-cell:hover { border-color: var(--active); }
+        .active-cell { border-color: var(--active) !important; color: var(--active); }
     </style>
 </head>
 <body>
 
-<div id="case-file">
+<div id="main-frame">
     <header>
         <div>
-            <h1 style="margin:0; font-size: 1.4em; letter-spacing: 5px;">INTERNAL INVESTIGATION: LEVEL 4</h1>
-            <small>NODE: SECURITY_MAIN_FRAME</small>
+            <h1 style="margin:0; letter-spacing: 8px;">ENCRYPTED SESSION: 0x77B</h1>
+            <small>CURRENT DATE: MARCH 16, 2026</small>
         </div>
-        <div id="timer" style="color:var(--red);">59:59</div>
+        <div id="timer">60:00</div>
     </header>
 
-    <div class="main-layout">
-        <div class="content-col">
-            <div id="display">
-                <p class="highlight">[СИСТЕМНОЕ СООБЩЕНИЕ]:</p>
-                <p>Критический сбой протокола Aegis. Хранилище «Зеро» деактивировано внешним скриптом. Прямые записи камер стерты. <br><br>
-                <span class="system-err">> ОШИБКА 403: Доступ к логам заблокирован. Требуется верификация дежурной группы.</span><br>
-                Для разблокировки введите <b>Контрольную Сумму Смены</b>.</p>
+    <div class="grid-system">
+        <div class="terminal-core">
+            <div id="terminal-display">
+                <p class="highlight">[СИСТЕМНЫЙ ВХОД ЗАБЛОКИРОВАН]</p>
+                <p>Обнаружено нарушение целостности хранилища. Канал передачи данных поврежден. <br><br>
+                Для инициализации сессии введите <b>Мастер-Ключ Охраны</b>. <br>
+                <i>Формула ключа: (ID_Алона + Стаж_Алона) + (ID_Дорона + Стаж_Дорона).</i><br>
+                <small>*Стаж считается как полных лет на текущий 2026 год относительно года рождения.</small></p>
             </div>
 
-            <div id="safe-ui" class="module-box" style="display:block; text-align: center;">
-                <input type="number" id="safe-input" class="terminal-input" placeholder="CHECKSUM_VAL">
+            <div id="mod-safe" class="module-box" style="display:block; text-align: center;">
+                <input type="number" id="input-safe" class="input-line" placeholder="MASTER_KEY">
                 <br>
-                <button onclick="checkSafe()">EXECUTE_AUTH</button>
+                <button onclick="valSafe()">RUN_AUTH</button>
             </div>
 
-            <div id="lab-ui" class="module-box">
-                <p class="highlight">СПЕКТРАЛЬНЫЙ АНАЛИЗ ГРУНТА</p>
-                <p>В досье Механика указан состав его 'авторского лака'. Сопоставьте химические элементы реагентов для выявления подделки:</p>
-                <div class="lab-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <div class="cargo-box" id="r1" onclick="selectR('r1')">C3H8O (Растворитель)</div>
-                    <div class="cargo-box" id="r2" onclick="selectR('r2')">AgNO3 (Аргентум)</div>
-                    <div class="cargo-box" id="r3" onclick="selectR('r3')">HNO3 (Кислота)</div>
-                    <div class="cargo-box" id="r4" onclick="selectR('r4')">C14H9N3O2 (Люминол)</div>
+            <div id="mod-lab" class="module-box">
+                <p class="highlight">СПЕКТРОМЕТРИЯ: ОБРАЗЕЦ #19</p>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <button id="r1" onclick="selR('r1')">C3H8O (Изопропил)</button>
+                    <button id="r2" onclick="selR('r2')">AgNO3 (Серебро)</button>
+                    <button id="r3" onclick="selR('r3')">HNO3 (Кислота)</button>
+                    <button id="r4" onclick="selR('r4')">C14H9N3O2 (Люминол)</button>
                 </div>
-                <button onclick="checkLab()" style="width:100%; margin-top:20px;">RUN_CHEM_SCAN</button>
+                <button onclick="valLab()" style="width:100%; margin-top:20px; border-color:var(--active)">START_SCAN</button>
             </div>
 
-            <div id="cargo-ui" class="module-box">
-                <p class="highlight">ЛОГИСТИЧЕСКИЙ УЗЕЛ: ТАМОЖНЯ</p>
-                <p>Найдите объект. Внимание: в досье курьера указан вес <b>Брутто</b> (с упаковкой). Упаковка типа 'A1' весит ровно 12 грамм.</p>
-                <div class="cargo-grid" id="cargo-grid"></div>
+            <div id="mod-workshop" class="module-box" style="text-align: center;">
+                <p class="highlight">СТАНОК ДЕШИФРОВКИ</p>
+                <p>Введите двоичный код из досье Дорона для перевода накладной в десятичный вид:</p>
+                <input type="text" id="input-bin" class="input-line" placeholder="00000000">
+                <br>
+                <button onclick="valBin()">DECODE_BINARY</button>
             </div>
 
-            <div class="actions">
-                <button id="nav-safe" onclick="showM('safe-ui')">Терминал</button>
-                <button id="nav-lab" class="hidden" onclick="showM('lab-ui')">Лаборатория</button>
-                <button id="nav-cargo" class="hidden" onclick="showM('cargo-ui')">Склад</button>
-                <button id="nav-archive" class="hidden" onclick="finalProcess()">Аэропорт</button>
+            <div id="mod-cargo" class="module-box">
+                <p class="highlight">ЛОГИСТИКА: СЕКТОР B-4</p>
+                <div id="cargo-grid" style="display:grid; grid-template-columns: repeat(5,1fr); gap:10px;"></div>
+            </div>
+
+            <div class="btn-group">
+                <button id="btn-safe" onclick="showM('mod-safe')">Главная</button>
+                <button id="btn-lab" class="hidden" onclick="showM('mod-lab')">Лаборатория</button>
+                <button id="btn-workshop" class="hidden" onclick="showM('mod-workshop')">Мастерская</button>
+                <button id="btn-cargo" class="hidden" onclick="showM('mod-cargo')">Склад</button>
+                <button id="btn-final" class="hidden" style="border-color:var(--alert)" onclick="final()">Аэропорт</button>
             </div>
         </div>
 
-        <div class="side-panel">
-            <h3 style="font-size:0.7em; color:var(--gold); border-bottom: 1px solid #333;">АРХИВ ПЕРСОНАЛА</h3>
-            <div id="suspects"></div>
-            <h3 style="font-size:0.7em; color:var(--gold); border-bottom: 1px solid #333; margin-top:20px;">УЛИКИ</h3>
-            <div id="clues"></div>
+        <div class="side-bar">
+            <h3 style="font-size:0.7em; color:var(--gold)">DATABASE: PERSONNEL</h3>
+            <div id="personnel-list"></div>
+            <h3 style="font-size:0.7em; color:var(--gold); margin-top:30px;">DATABASE: EVIDENCE</h3>
+            <div id="clue-list"></div>
         </div>
     </div>
 </div>
 
 <script>
-    const db = {
-        alon: { name: "Алон (СБ)", info: "ID: 310. Уровень допуска: x2. Год рождения: 1985. Протокол: 'Всегда ухожу на перерыв в 14:00'." },
-        doron: { name: "Дорон (Техник)", info: "ID: 102. Уровень допуска: x5. Год рождения: 1993. Заметка: 'Имеет доступ к коду перекраски камер'." },
-        eli: { name: "Эли (Механик)", info: "Мастер иллюзий. В мастерской найден лак на основе <b>серебра</b> и <b>изопропила</b>. Сохнет за 2 минуты." },
-        mark: { name: "Марк (Курьер)", info: "Посылка: 'Детали'. Чистый вес (нетто): 438г. Тип упаковки: A1 (12г). Рейс 772." }
+    const data = {
+        alon: { name: "Алон (СБ)", info: "ID: 310. Родился: 1985. Ветеран службы. В 14:02 отошел за кофе, оставив терминал Дорону." },
+        doron: { name: "Дорон (Техник)", info: "ID: 102. Родился: 1993. Оставил в системе двоичный след: <b>00110010</b>. Племянник Эли." },
+        eli: { name: "Эли (Механик)", info: "Специалист по 'серебряному напылению'. В мастерской найден флакон AgNO3. Бывший циркач." },
+        mark: { name: "Марк (Курьер)", info: "Везет груз 'A-1'. Вес нетто: 488г. Упаковка весит столько же, сколько 'Сдвиг Дорона' (десятичное число из его бинарного кода)." }
     };
 
-    let state = { clues: new Set(), reagents: [] };
+    let state = { clues: new Set(), reagents: [], time: 3600 };
 
     function init() {
-        const s = document.getElementById('suspects');
-        for(let k in db) {
+        const pList = document.getElementById('personnel-list');
+        for(let k in data) {
             const d = document.createElement('div');
-            d.className = 'dossier-card';
-            d.innerHTML = `<b>${db[k].name}</b>`;
-            d.onclick = () => {
-                document.getElementById('display').innerHTML = `<h3>ДОСЬЕ: ${db[k].name}</h3><p>${db[k].info}</p>`;
-            };
-            s.appendChild(d);
+            d.className = 'card';
+            d.innerHTML = `<b>${data[k].name}</b>`;
+            d.onclick = () => { document.getElementById('terminal-display').innerHTML = `<h3>LOG_ENTRY: ${data[k].name}</h3><p>${data[k].info}</p>`; };
+            pList.appendChild(d);
         }
         genCargo();
+        startClock();
     }
 
-    // ЗАДАНИЕ 1: (310 * 2) + (102 * 5) = 620 + 510 = 1130
-    function checkSafe() {
-        if(document.getElementById('safe-input').value === "1130") {
-            addC("Доступ в Зеро открыт");
-            document.getElementById('display').innerHTML = `<h3>СТАТУС: АВТОРИЗОВАНО</h3><p>Сейф открыт удаленно. Внутри — следы мелкодисперсного серебра и театрального грима. <br><br>> ОБНАРУЖЕНО: Объект 'Нептун' заменен на свинцовую копию.</p>`;
-            document.getElementById('nav-lab').classList.remove('hidden');
-            showM('lab-ui');
-        } else { alert("ОШИБКА: Контрольная сумма не совпадает с допусками смены."); }
+    // ЛОГИКА 1: (310 + (2026-1985)) + (102 + (2026-1993)) = (310+41) + (102+33) = 351 + 135 = 486
+    function valSafe() {
+        if(document.getElementById('input-safe').value === "486") {
+            addC("Доступ: УРОВЕНЬ 1");
+            document.getElementById('terminal-display').innerHTML = `<h3>ДОСТУП РАЗРЕШЕН</h3><p>Сейф вскрыт. Внутри обнаружены следы AgNO3 и театрального грима. <br><br><b>Система:</b> Обнаружены хим. следы. Требуется анализ.</p>`;
+            document.getElementById('btn-lab').classList.remove('hidden');
+            showM('mod-lab');
+        } else { alert("ACCESS_DENIED: Неверный ключ стажа."); }
     }
 
-    // ЗАДАНИЕ 2: Серебро (AgNO3) и Изопропил (C3H8O) -> r1 + r2
-    function selectR(id) {
-        const el = document.getElementById(id);
+    // ЛОГИКА 2: Эли использует AgNO3 (Серебро) и C3H8O (Изопропил для лака) -> r1 + r2
+    function selR(id) {
+        const b = document.getElementById(id);
         if(state.reagents.includes(id)) {
             state.reagents = state.reagents.filter(x => x !== id);
-            el.classList.remove('active');
+            b.style.borderColor = "#222";
         } else if(state.reagents.length < 2) {
             state.reagents.push(id);
-            el.classList.add('active');
+            b.style.borderColor = "var(--active)";
         }
     }
 
-    function checkLab() {
+    function valLab() {
         if(state.reagents.sort().join('') === 'r1r2') {
-            addC("Хим-анализ: Лак Эли");
-            document.getElementById('display').innerHTML = `<h3>АНАЛИЗ ЗАВЕРШЕН</h3><p>Состав идентичен лаку, который Эли Рафаэль заказывал для своей мастерской. <br><br>> ВЫВОД: Предметы были покрашены 'на ходу'.</p>`;
-            document.getElementById('nav-cargo').classList.remove('hidden');
-        } else { alert("РЕАКЦИЯ ОТРИЦАТЕЛЬНА. Состав не соответствует уликам из мастерской."); }
+            addC("След: Лак 'Иллюзия'");
+            document.getElementById('terminal-display').innerHTML = `<h3>АНАЛИЗ ЗАВЕРШЕН</h3><p>На перчатке найдены частицы, идентичные лаку в мастерской Эли Рафаэля. <br><br><b>Система:</b> Открыт доступ к мастерской.</p>`;
+            document.getElementById('btn-workshop').classList.remove('hidden');
+            showM('mod-workshop');
+        } else { alert("SCAN_ERROR: Состав не опознан."); }
     }
 
-    // ЗАДАНИЕ 3: 438г (нетто) + 12г (упаковка) = 450г.
+    // ЛОГИКА 3: 00110010 (двоичное) = 50 (десятичное).
+    function valBin() {
+        if(document.getElementById('input-bin').value === "50") {
+            addC("Код Сдвига: 50");
+            document.getElementById('terminal-display').innerHTML = `<h3>ДЕШИФРОВКА УСПЕШНА</h3><p>Число 50 получено. Вес упаковки Марка определен. <br><br><b>Система:</b> Рассчитайте итоговый вес брутто и найдите контейнер на складе.</p>`;
+            document.getElementById('btn-cargo').classList.remove('hidden');
+            showM('mod-cargo');
+        } else { alert("DECODE_ERROR: Неверный двоичный код."); }
+    }
+
+    // ЛОГИКА 4: Вес нетто 488 + упаковка 50 = 538г.
     function genCargo() {
         const g = document.getElementById('cargo-grid');
-        const ws = [438, 442, 450, 460, 450, 438, 450, 12, 450, 500];
+        const ws = [488, 500, 538, 550, 488, 538, 512, 538, 600, 538];
         ws.forEach((w, i) => {
             const b = document.createElement('div');
-            b.className = 'cargo-box';
-            b.innerText = `LOT-${500+i}\n${w}г`;
+            b.className = 'cargo-cell';
+            b.innerText = `PKG-${700+i}\n${w}г`;
             b.onclick = () => {
-                if(w === 450 && i === 2) { // Правильный только один по логике (например, третий)
-                    b.classList.add('active');
-                    addC("Лот 502: Содержит алмаз");
-                    document.getElementById('display').innerHTML = `<h3>СКЛАД: ОБЪЕКТ ПЕРЕХВАЧЕН</h3><p>В контейнере 502 найдены пуговицы. Спектрометр подтверждает: под слоем лака — алмаз высокой чистоты.</p>`;
-                    document.getElementById('nav-archive').classList.remove('hidden');
-                } else { b.style.opacity = "0.3"; }
+                if(w === 538 && i === 2) { // Только один правильный слот
+                    b.classList.add('active-cell');
+                    addC("Груз 702 перехвачен");
+                    document.getElementById('terminal-display').innerHTML = `<h3>СКЛАД: ОБЪЕКТ НАЙДЕН</h3><p>В контейнере 702 обнаружены 'стальные пуговицы'. Слой лака скрывает алмаз 400 карат.</p>`;
+                    document.getElementById('btn-final').classList.remove('hidden');
+                } else { b.style.opacity = "0.1"; }
             };
             g.appendChild(b);
         });
     }
 
-    function finalProcess() {
-        const name = prompt("КТО ОРГАНИЗАТОР? (Фамилия)");
-        const tech = prompt("КТО ОТКЛЮЧИЛ СИСТЕМУ? (Имя)");
-        if(name.toLowerCase().includes("рафаэль") && tech.toLowerCase().includes("дорон")) {
-            alert("ДЕЛО ЗАКРЫТО. Преступники арестованы. Алмаз возвращен.");
+    function final() {
+        const ans = prompt("КТО ВИНОВЕН И КАК СКРЫЛ АЛМАЗ? (Напр: Фамилия, способ)");
+        if(ans.toLowerCase().includes("рафаэль") && ans.toLowerCase().includes("пуговицы")) {
+            alert("ДЕЛО ЗАКРЫТО. Эли и Дорон арестованы. Алмаз возвращен государству.");
             location.reload();
-        } else { alert("НЕДОСТАТОЧНО ДОКАЗАТЕЛЬСТВ. Подозреваемые отпущены."); }
+        } else { alert("ПРОВАЛ: Преступники покинули юрисдикцию."); }
     }
 
     function addC(t) {
         state.clues.add(t);
-        const l = document.getElementById('clues');
+        const l = document.getElementById('clue-list');
         l.innerHTML = "";
         state.clues.forEach(c => {
             const s = document.createElement('span');
-            s.className = 'clue-tag';
+            s.className = 'clue-item';
             s.innerText = c;
             l.appendChild(s);
         });
@@ -198,12 +212,13 @@
         document.getElementById(id).style.display = 'block';
     }
 
-    setInterval(() => {
-        let t = document.getElementById('timer');
-        let [m, s] = t.innerText.split(':').map(Number);
-        if(s === 0) { m--; s = 59; } else { s--; }
-        t.innerText = `${m}:${s < 10 ? '0' + s : s}`;
-    }, 1000);
+    function startClock() {
+        setInterval(() => {
+            state.time--;
+            let m = Math.floor(state.time/60), s = state.time%60;
+            document.getElementById('timer').innerText = `${m}:${s<10?'0'+s:s}`;
+        }, 1000);
+    }
 
     window.onload = init;
 </script>
