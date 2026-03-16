@@ -2,139 +2,126 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>IAA ARCHAEOLOGICAL FORENSIC</title>
+    <title>IAA - DEEP INVESTIGATION</title>
     <style>
-        :root { --sand: #e2d1b3; --clay: #a67d5d; --ink: #2b1d0e; --gold: #ffd700; }
-        body { background: #1a1a1a; color: var(--sand); font-family: 'Georgia', serif; margin: 0; padding: 20px; }
+        :root { --parchment: #f4e4bc; --ink: #2c1810; --accent: #8b4513; --gold: #d4af37; }
+        body { background: #0f0f0f; color: var(--parchment); font-family: 'Times New Roman', serif; padding: 20px; }
         
-        #vault-frame { max-width: 1400px; margin: 0 auto; border: 3px solid var(--clay); background: #26211c; padding: 30px; box-shadow: inset 0 0 50px #000; }
-        header { border-bottom: 2px double var(--clay); padding-bottom: 20px; margin-bottom: 30px; text-align: center; }
-        
-        .main-layout { display: grid; grid-template-columns: 350px 1fr 380px; gap: 25px; height: 85vh; }
-        
-        /* Стили консоли */
-        #journal { background: #fdf6e3; color: var(--ink); padding: 25px; border-radius: 5px; box-shadow: 5px 5px 15px #000; overflow-y: auto; font-style: italic; line-height: 1.6; }
+        #main-ui { max-width: 1500px; margin: 0 auto; display: grid; grid-template-columns: 400px 1fr 400px; gap: 20px; height: 92vh; }
+        .panel { border: 2px solid var(--accent); background: #1a1510; padding: 20px; overflow-y: auto; box-shadow: 0 0 20px #000; }
         
         /* Досье */
-        .card { background: #3d352d; border: 1px solid var(--clay); padding: 15px; margin-bottom: 15px; font-size: 0.85em; }
-        .card b { color: var(--gold); text-transform: uppercase; }
-        .tag { color: #8ecae6; font-size: 0.8em; border: 1px solid #8ecae6; padding: 2px 4px; margin-right: 5px; }
+        .dossier-file { border-bottom: 1px solid var(--accent); padding: 15px 0; font-size: 0.9em; }
+        .dossier-file b { color: var(--gold); display: block; margin-bottom: 5px; }
+        .note { font-size: 0.8em; color: #a09070; font-style: italic; margin-top: 5px; }
 
-        /* Инструменты */
-        .tool-box { margin-top: 20px; background: #1a1a1a; padding: 20px; border: 1px solid var(--clay); }
-        input { background: #000; border: 1px solid var(--clay); color: var(--gold); padding: 12px; width: 100%; box-sizing: border-box; font-family: 'Courier New'; margin-bottom: 10px; }
-        button { background: var(--clay); color: white; border: none; padding: 12px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; }
-        button:hover { background: var(--gold); color: #000; }
-
-        .chemical-report { font-size: 0.75em; color: #9d9d9d; margin-top: 10px; border: 1px dashed #555; padding: 10px; }
+        /* Консоль */
+        #journal-core { background: var(--parchment); color: var(--ink); padding: 25px; min-height: 400px; border-radius: 2px; position: relative; }
+        #journal-core::after { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('https://www.transparenttextures.com/patterns/old-paper.png'); pointer-events: none; }
+        
+        .input-group { margin-top: 20px; background: #261c15; padding: 15px; border: 1px solid var(--gold); }
+        input { background: #000; border: 1px solid var(--accent); color: var(--gold); padding: 12px; width: 100%; box-sizing: border-box; font-family: monospace; outline: none; }
+        
+        .status-tag { display: inline-block; padding: 2px 6px; font-size: 0.7em; border: 1px solid; margin-bottom: 10px; text-transform: uppercase; }
+        .critical { border-color: #ff4500; color: #ff4500; }
+        .locked { color: #555; border-color: #555; }
     </style>
 </head>
 <body>
 
-<div id="vault-frame">
-    <header>
-        <h1 style="margin:0; letter-spacing: 5px;">IAA: ANTIQUITIES DATABASE</h1>
-        <small>ИЕРУСАЛИМ • ОТДЕЛ ПО БОРЬБЕ С ХИЩЕНИЕМ НАСЛЕДИЯ</small>
-    </header>
-
-    <div class="main-layout">
-        <div class="panel">
-            <h3 style="color:var(--gold)">ФИГУРАНТЫ ДЕЛА</h3>
-            <div id="suspects-list"></div>
+<div id="main-ui">
+    <div class="panel">
+        <h3 style="color:var(--gold); border-bottom: 1px solid var(--gold);">АРХИВ IAA: СУБЪЕКТЫ</h3>
+        
+        <div class="dossier-file">
+            <b>Проф. Элиэзер Бергман (68 лет)</b>
+            <span class="status-tag critical">Под подозрением</span>
+            <div>ID: 405. Специалист по эпиграфике. В его записной книжке найдена дробь: <b>[IAA-744 / 31]</b>. 
+            Утверждает, что 31 — это число «царей Ханаанских».</div>
+            <div class="note">Привычка: всегда носит с собой монету весом в 0.5 сикля.</div>
         </div>
 
-        <div style="display: flex; flex-direction: column;">
-            <div id="journal">
-                <p><b>ЗАПИСЬ #882:</b> Пропавшая печать была найдена в секторе <b>G-12</b> (Город Давида). <br>
-                Инвентарный номер: <b>IAA-744</b>. <br>
-                Состав: золото 98% + следы меди. Вес: <b>12 сиклей</b> (1 сикль = 11.4 г).</p>
-                <hr>
-                <p>> <b>ЗАДАЧА 1:</b> Вычислите общий вес артефакта в граммах. <br>
-                Введите число, чтобы открыть отчет химического анализа патины.</p>
-            </div>
-            
-            <div class="tool-box">
-                <input type="text" id="main-input" placeholder="ВВЕДИТЕ ЗНАЧЕНИЕ...">
-                <button onclick="checkData()">ПОДТВЕРДИТЬ ПОИСК</button>
+        <div class="dossier-file">
+            <b>Сара Леви (32 года)</b>
+            <span class="status-tag">Дочь инспектора</span>
+            <div>Должность: Оценщик в лаборатории. ID: 225. Обнаружила подмену печати, но сообщила об этом только через <b>(ID отца / 3)</b> часа.</div>
+            <div class="note">Связь: видела Абу Саида в кафе "Лидо" за день до кражи.</div>
+        </div>
+
+        <div class="dossier-file">
+            <b>Абу Саид (44 года)</b>
+            <span class="status-tag">В розыске</span>
+            <div>Бывший землекоп. На левой руке татуировка с координатами: <b>31.77°N, [35.23 + X]°E</b>. 
+            Где X — это 1/1000 веса печати в граммах.</div>
+        </div>
+
+        <div class="dossier-file">
+            <b>Инспектор Ицхак Леви (59 лет)</b>
+            <span class="status-tag locked">Алиби проверяется</span>
+            <div>ID: 909. Ветеран службы. Ровно в <b>02:15</b> его карта была считана в секторе "Туннель Хасмонеев".</div>
+        </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column;">
+        <div id="journal-core">
+            <h2 style="text-align:center; margin-top:0;">ОПЕРАТИВНЫЙ ЖУРНАЛ</h2>
+            <div id="display">
+                <p>> Исходные данные: Печать IAA-744 весит 12 сиклей. (1 сикль = 11.4г).</p>
+                <p>> <b>ЗАДАЧА 1:</b> Вычислите координату X для поиска Абу Саида. <br>
+                Формула: <b>(Общий вес печати в граммах) / 1000</b>.</p>
             </div>
         </div>
 
-        <div class="panel">
-            <h3 style="color:var(--gold)">АРТЕФАКТЫ И УЛИКИ</h3>
-            <div id="evidence-box">
-                <div class="card" style="border-color:var(--gold)">
-                    <b>ПЕРЕХВАТ СООБЩЕНИЯ:</b><br>
-                    "Встретимся в туннеле Езекии. Ключ к гермозатвору — это стих из Книги Царств, где упоминается вес золота, привозимого Соломону за год."
-                    <div class="chemical-report">ПОДСКАЗКА: 3-я Царств 10:14.</div>
-                </div>
-            </div>
+        <div class="input-group">
+            <input type="text" id="user-input" placeholder="ОЖИДАНИЕ ВВОДА...">
+            <button onclick="process()" style="background:var(--accent); color:white; border:none; padding:10px; cursor:pointer; width:100%; margin-top:10px; font-weight:bold;">ВЫПОЛНИТЬ АНАЛИЗ</button>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h3 style="color:var(--gold); border-bottom: 1px solid var(--gold);">ПРОТОКОЛЫ И ТЕКСТЫ</h3>
+        <div class="dossier-file" style="background:#221a15; padding:10px;">
+            <b>ЗАПИСЬ ДОПРОСА БЕРГМАНА:</b>
+            <p>"Вы не понимаете... Стих 10:14 в Книге Царств — это не только про вес. Это про <b>Локоть</b>. Если умножить число талантов (666) на число царей (31), вы получите расстояние до входа в локтях!"</p>
+        </div>
+        <div id="intel" style="margin-top:20px;">
+            <div class="note">Шифр "31 царь": Иисус Навин 12:24.</div>
         </div>
     </div>
 </div>
 
 <script>
-    const suspects = {
-        bergman: { 
-            name: "Проф. Бергман", 
-            role: "Археолог", 
-            bio: "ID: 405. Проводил раскопки в секторе G. Погряз в судебных тяжбах. Родился в <b>1958</b> году." 
-        },
-        abu_said: { 
-            name: "Абу Саид", 
-            role: "Рабочий", 
-            bio: "Нашел клад. Знает туннели как свои пять пальцев. ID: 112. Скрылся в Старом Городе." 
-        },
-        levy: { 
-            name: "Инспектор Леви", 
-            role: "Охрана IAA", 
-            bio: "ID: 909. Имел доступ к ключам в ночь пропажи. Последняя активность: <b>02:15</b> у выхода к Стене Плача." 
-        }
-    };
+    let step = 1;
 
-    let stage = 1;
+    function process() {
+        const val = document.getElementById('user-input').value;
+        const disp = document.getElementById('display');
 
-    function init() {
-        const container = document.getElementById('suspects-list');
-        for(let key in suspects) {
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.innerHTML = `<span class='tag'>${suspects[key].role}</span><br><b>${suspects[key].name}</b><br><small>${suspects[key].bio}</small>`;
-            container.appendChild(div);
+        if(step === 1) {
+            // Вес: 12 * 11.4 = 136.8. X = 136.8 / 1000 = 0.1368.
+            if(val === "0.1368") {
+                disp.innerHTML += `<p style='color:#a0522d'>> КООРДИНАТЫ ПОЛУЧЕНЫ. Позиция Абу Саида: 35.3668°E. <br> Спецназ обнаружил его в подвале дома в районе Сильван. При нем найдена записка: "Сара знает истинный размер".</p>`;
+                disp.innerHTML += `<p>> <b>ЗАДАЧА 2:</b> Через сколько часов Сара Леви сообщила о краже? <br> См. её досье (ID отца / 3).</p>`;
+                step = 2;
+            } else { alert("ОШИБКА: Координаты ведут в никуда."); }
         }
-    }
-
-    function checkData() {
-        const val = document.getElementById('main-input').value;
-        const journal = document.getElementById('journal');
-
-        if(stage === 1) {
-            // Логика: 12 сиклей * 11.4 г = 136.8.
-            if(val === "136.8") {
-                journal.innerHTML += `<p style='color:var(--clay)'>> АНАЛИЗ ПРИНЯТ. <br> Химический отчет: На месте кражи найдена пыль известняка, характерная только для <b>туннелей под Мусульманским кварталом</b>.</p>`;
-                journal.innerHTML += `<p>> <b>ЗАДАЧА 2:</b> Введите секретный код из Книги Царств (3 Царств 10:14) — сколько талантов золота получал Соломон?</p>`;
-                stage = 2;
-            } else { alert("ОШИБКА ВЕСА: Весы не сбалансированы."); }
+        else if(step === 2) {
+            // ID отца (Ицхак Леви) = 909. 909 / 3 = 303.
+            if(val === "303") {
+                disp.innerHTML += `<p style='color:#a0522d'>> АНОМАЛИЯ: 303 часа — это более 12 дней. Сара лгала в протоколе. <br> Под давлением она призналась: "Вход запечатан на глубине, равной результату вычисления Бергмана (Таланты * Цари)".</p>`;
+                disp.innerHTML += `<p>> <b>ЗАДАЧА 3:</b> Вычислите глубину/расстояние в локтях. <br> (Число талантов из 3 Цар 10:14) * (Число царей из досье Бергмана).</p>`;
+                step = 3;
+            } else { alert("ЛОЖЬ: Время в протоколе не совпадает."); }
         }
-        else if(stage === 2) {
-            // В 3-й Книге Царств 10:14 указано 666 талантов золота.
-            if(val === "666") {
-                journal.innerHTML += `<p style='color:var(--clay)'>> ШИФР ВЕРЕН. <br> Вы получили доступ к камерам. <br> На видео в 02:15 инспектор Леви передает сверток человеку, чей год рождения совпадает с инвентарным номером IAA (IAA-744 -> 19XX).</p>`;
-                journal.innerHTML += `<p>> <b>ЗАДАЧА 3:</b> Вычислите год рождения сообщника. Это (2026 - (744 / 12)).</p>`;
-                stage = 3;
-            } else { alert("ТЕКСТ НЕВЕРЕН: Писание говорит об ином."); }
-        }
-        else if(stage === 3) {
-            // 744 / 12 = 62. 2026 - 62 = 1964.
-            if(val === "1964") {
-                alert("ПЕЧАТЬ ПЕРЕХВАЧЕНА! Инспектор Леви и его связной задержаны в туннелях Езекии. Артефакт возвращен в музей.");
+        else if(step === 3) {
+            // Таланты (666) * Цари (31) = 20646.
+            if(val === "20646") {
+                alert("СТЕНА ВСКРЫТА! На расстоянии 20646 локтей от начальной точки обнаружена скрытая камера. Внутри — печать и архив Свитков Мертвого моря, похищенный ранее. Сара и Бергман планировали вывезти их вместе.");
                 location.reload();
-            }
+            } else { alert("ПУСТОТА: Вы бьете не в ту стену."); }
         }
-        document.getElementById('main-input').value = "";
-        journal.scrollTop = 9999;
+        document.getElementById('user-input').value = "";
     }
-
-    init();
 </script>
 
 </body>
