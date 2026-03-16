@@ -2,126 +2,161 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>IAA - DEEP INVESTIGATION</title>
+    <title>IAA - CASE: SOLOMON_SEAL</title>
     <style>
-        :root { --parchment: #f4e4bc; --ink: #2c1810; --accent: #8b4513; --gold: #d4af37; }
-        body { background: #0f0f0f; color: var(--parchment); font-family: 'Times New Roman', serif; padding: 20px; }
+        :root { --parchment: #f4e4bc; --paper-dark: #261c15; --accent: #8b4513; --gold: #d4af37; --bg: #0f0f0f; }
+        body { background: var(--bg); color: var(--parchment); font-family: 'Times New Roman', serif; margin: 0; padding: 15px; overflow: hidden; }
         
-        #main-ui { max-width: 1500px; margin: 0 auto; display: grid; grid-template-columns: 400px 1fr 400px; gap: 20px; height: 92vh; }
-        .panel { border: 2px solid var(--accent); background: #1a1510; padding: 20px; overflow-y: auto; box-shadow: 0 0 20px #000; }
+        #main-layout { display: grid; grid-template-columns: 380px 1fr 400px; gap: 15px; height: 95vh; transition: 0.5s; }
+        .panel { border: 2px solid var(--accent); background: #1a1510; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
         
-        /* Досье */
-        .dossier-file { border-bottom: 1px solid var(--accent); padding: 15px 0; font-size: 0.9em; }
-        .dossier-file b { color: var(--gold); display: block; margin-bottom: 5px; }
-        .note { font-size: 0.8em; color: #a09070; font-style: italic; margin-top: 5px; }
+        /* Стилизация досье (мини-карточки) */
+        .suspect-thumb { border-bottom: 1px solid var(--accent); padding: 15px 0; cursor: pointer; transition: 0.3s; }
+        .suspect-thumb:hover { background: #261c15; padding-left: 10px; }
+        .suspect-thumb b { color: var(--gold); font-size: 1.1em; }
+        
+        /* Центральный журнал */
+        #journal-core { background: var(--parchment); color: #2c1810; padding: 30px; border-radius: 2px; position: relative; flex-grow: 1; box-shadow: inset 0 0 40px rgba(0,0,0,0.2); overflow-y: auto; }
+        #journal-core h2 { text-align: center; border-bottom: 2px solid #2c1810; padding-bottom: 10px; margin-top: 0; }
+        
+        /* Модальное окно полного досье */
+        #full-dossier { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: var(--paper-dark); border: 3px solid var(--gold); z-index: 100; padding: 40px; box-sizing: border-box; overflow-y: auto; box-shadow: 0 0 100px #000; }
+        .close-btn { position: absolute; top: 20px; right: 20px; color: var(--gold); cursor: pointer; font-size: 1.5em; border: 1px solid; padding: 5px 15px; }
+        .dossier-grid { display: grid; grid-template-columns: 300px 1fr; gap: 40px; }
+        .photo-placeholder { width: 100%; height: 350px; background: #111; border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; color: #333; font-weight: bold; }
 
-        /* Консоль */
-        #journal-core { background: var(--parchment); color: var(--ink); padding: 25px; min-height: 400px; border-radius: 2px; position: relative; }
-        #journal-core::after { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('https://www.transparenttextures.com/patterns/old-paper.png'); pointer-events: none; }
-        
-        .input-group { margin-top: 20px; background: #261c15; padding: 15px; border: 1px solid var(--gold); }
-        input { background: #000; border: 1px solid var(--accent); color: var(--gold); padding: 12px; width: 100%; box-sizing: border-box; font-family: monospace; outline: none; }
-        
-        .status-tag { display: inline-block; padding: 2px 6px; font-size: 0.7em; border: 1px solid; margin-bottom: 10px; text-transform: uppercase; }
-        .critical { border-color: #ff4500; color: #ff4500; }
-        .locked { color: #555; border-color: #555; }
+        /* Инпуты */
+        .input-box { background: #261c15; padding: 20px; border-top: 2px solid var(--gold); }
+        input { background: #000; border: 1px solid var(--accent); color: var(--gold); padding: 15px; width: 100%; box-sizing: border-box; font-size: 1.1em; outline: none; }
+        button { background: var(--accent); color: white; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
+
+        .update-flash { color: var(--gold); animation: blink 1s infinite; font-weight: bold; font-size: 0.8em; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
-<div id="main-ui">
+<div id="main-layout">
     <div class="panel">
-        <h3 style="color:var(--gold); border-bottom: 1px solid var(--gold);">АРХИВ IAA: СУБЪЕКТЫ</h3>
-        
-        <div class="dossier-file">
-            <b>Проф. Элиэзер Бергман (68 лет)</b>
-            <span class="status-tag critical">Под подозрением</span>
-            <div>ID: 405. Специалист по эпиграфике. В его записной книжке найдена дробь: <b>[IAA-744 / 31]</b>. 
-            Утверждает, что 31 — это число «царей Ханаанских».</div>
-            <div class="note">Привычка: всегда носит с собой монету весом в 0.5 сикля.</div>
-        </div>
-
-        <div class="dossier-file">
-            <b>Сара Леви (32 года)</b>
-            <span class="status-tag">Дочь инспектора</span>
-            <div>Должность: Оценщик в лаборатории. ID: 225. Обнаружила подмену печати, но сообщила об этом только через <b>(ID отца / 3)</b> часа.</div>
-            <div class="note">Связь: видела Абу Саида в кафе "Лидо" за день до кражи.</div>
-        </div>
-
-        <div class="dossier-file">
-            <b>Абу Саид (44 года)</b>
-            <span class="status-tag">В розыске</span>
-            <div>Бывший землекоп. На левой руке татуировка с координатами: <b>31.77°N, [35.23 + X]°E</b>. 
-            Где X — это 1/1000 веса печати в граммах.</div>
-        </div>
-
-        <div class="dossier-file">
-            <b>Инспектор Ицхак Леви (59 лет)</b>
-            <span class="status-tag locked">Алиби проверяется</span>
-            <div>ID: 909. Ветеран службы. Ровно в <b>02:15</b> его карта была считана в секторе "Туннель Хасмонеев".</div>
-        </div>
+        <h3 style="color:var(--gold)">АРХИВ IAA: ФИГУРАНТЫ</h3>
+        <div id="suspects-list"></div>
     </div>
 
     <div style="display: flex; flex-direction: column;">
         <div id="journal-core">
-            <h2 style="text-align:center; margin-top:0;">ОПЕРАТИВНЫЙ ЖУРНАЛ</h2>
-            <div id="display">
-                <p>> Исходные данные: Печать IAA-744 весит 12 сиклей. (1 сикль = 11.4г).</p>
-                <p>> <b>ЗАДАЧА 1:</b> Вычислите координату X для поиска Абу Саида. <br>
-                Формула: <b>(Общий вес печати в граммах) / 1000</b>.</p>
+            <h2>ОПЕРАТИВНЫЙ ЖУРНАЛ: ДЕЛО "ПЕЧАТЬ ЦАРЯ"</h2>
+            <div id="log-content">
+                <p><b>ВВОДНАЯ СВОДКА:</b> 16 марта, 19:52. Обнаружена пропажа золотой печати IAA-744 из спецхранилища Музея Рокфеллера. Система охраны была деактивирована вручную.</p>
+                <p><b>ТЕКУЩИЙ СТАТУС:</b> Мы предполагаем, что артефакт все еще в черте Старого города. Группа по борьбе с хищениями (IAA Theft Prevention Unit) переведена в режим полной готовности.</p>
+                <p style="border-left: 3px solid var(--accent); padding-left: 10px; background: rgba(139, 69, 19, 0.1);">
+                    <i>"Печать весит 12 сиклей. Каждая крупица золота на черном рынке — это след. Если мы узнаем точный вес в граммах, мы сможем отследить транзакции по весу при попытке сбыта."</i>
+                </p>
+                <p>> <b>ЗАДАЧА 1:</b> Вычислите координату X (1/1000 веса в граммах), чтобы накрыть тайник Абу Саида.</p>
             </div>
         </div>
 
-        <div class="input-group">
-            <input type="text" id="user-input" placeholder="ОЖИДАНИЕ ВВОДА...">
-            <button onclick="process()" style="background:var(--accent); color:white; border:none; padding:10px; cursor:pointer; width:100%; margin-top:10px; font-weight:bold;">ВЫПОЛНИТЬ АНАЛИЗ</button>
+        <div class="input-box">
+            <input type="text" id="main-input" placeholder="ВВЕДИТЕ ДАННЫЕ АНАЛИЗА...">
+            <button onclick="handleLogic()">ВЫПОЛНИТЬ ПРОВЕРКУ</button>
         </div>
     </div>
 
     <div class="panel">
-        <h3 style="color:var(--gold); border-bottom: 1px solid var(--gold);">ПРОТОКОЛЫ И ТЕКСТЫ</h3>
-        <div class="dossier-file" style="background:#221a15; padding:10px;">
-            <b>ЗАПИСЬ ДОПРОСА БЕРГМАНА:</b>
-            <p>"Вы не понимаете... Стих 10:14 в Книге Царств — это не только про вес. Это про <b>Локоть</b>. Если умножить число талантов (666) на число царей (31), вы получите расстояние до входа в локтях!"</p>
-        </div>
-        <div id="intel" style="margin-top:20px;">
-            <div class="note">Шифр "31 царь": Иисус Навин 12:24.</div>
+        <h3 style="color:var(--gold)">ПЕРЕХВАТЫ И ШИФРЫ</h3>
+        <div style="font-size: 0.85em; font-style: italic;">
+            <p><b>Перехват SMS:</b> "Бергман, печать у меня. Но цифры в твоих книгах не сходятся. Как глубоко копать?"</p>
+            <p><b>Заметка:</b> 3 Царств 10:14 — ключевой текст. Там скрыто число талантов золота (666).</p>
         </div>
     </div>
 </div>
 
+<div id="full-dossier">
+    <div class="close-btn" onclick="closeDossier()">X</div>
+    <div id="dossier-content"></div>
+</div>
+
 <script>
-    let step = 1;
+    const db = {
+        bergman: {
+            name: "Проф. Элиэзер Бергман", age: 68, id: 405, 
+            brief: "Специалист по эпиграфике. Подозревается в связях с черным рынком.",
+            full: "<b>БИОГРАФИЯ:</b> 40 лет работы в Управлении древностей. В последнее время имел крупные долги. <br><br><b>ОБЫСК:</b> В кабинете найдена карта секторов G-12 с пометкой 'Тут лежит истина'. <br><b>СВЯЗИ:</b> Часто созванивался с Абу Саидом.",
+            unlocked: false
+        },
+        sara: {
+            name: "Сара Леви", age: 32, id: 225, 
+            brief: "Оценщик лаборатории. Дочь главного инспектора.",
+            full: "<b>ПРОТОКОЛ ДОПРОСА:</b> Утверждает, что зашла в хранилище в 03:00, но логи показывают её карту раньше. <br><br><b>СКРЫТЫЙ ФАКТ:</b> <span id='sara-secret'>[ЗАБЛОКИРОВАНО. НУЖЕН УРОВЕНЬ ДОСТУПА 2]</span>",
+            unlocked: false
+        },
+        abu: {
+            name: "Абу Саид", age: 44, id: 112, 
+            brief: "Землекоп. Подозревается в физическом выносе артефакта.",
+            full: "<b>ОПЕРАТИВНЫЕ ДАННЫЕ:</b> Замечен в туннелях под Мусульманским кварталом. <br><br><b>УЛИКА:</b> Татуировка на руке содержит формулу координат, завязанную на весе золота.",
+            unlocked: false
+        }
+    };
 
-    function process() {
-        const val = document.getElementById('user-input').value;
-        const disp = document.getElementById('display');
+    let currentStep = 1;
 
-        if(step === 1) {
-            // Вес: 12 * 11.4 = 136.8. X = 136.8 / 1000 = 0.1368.
-            if(val === "0.1368") {
-                disp.innerHTML += `<p style='color:#a0522d'>> КООРДИНАТЫ ПОЛУЧЕНЫ. Позиция Абу Саида: 35.3668°E. <br> Спецназ обнаружил его в подвале дома в районе Сильван. При нем найдена записка: "Сара знает истинный размер".</p>`;
-                disp.innerHTML += `<p>> <b>ЗАДАЧА 2:</b> Через сколько часов Сара Леви сообщила о краже? <br> См. её досье (ID отца / 3).</p>`;
-                step = 2;
-            } else { alert("ОШИБКА: Координаты ведут в никуда."); }
+    function init() {
+        const list = document.getElementById('suspects-list');
+        list.innerHTML = "";
+        for(let key in db) {
+            const div = document.createElement('div');
+            div.className = 'suspect-thumb';
+            div.innerHTML = `<b>${db[key].name}</b><br><small>${db[key].brief}</small> ${db[key].unlocked ? '<span class="update-flash">ОБНОВЛЕНО</span>' : ''}`;
+            div.onclick = () => openDossier(key);
+            list.appendChild(div);
         }
-        else if(step === 2) {
-            // ID отца (Ицхак Леви) = 909. 909 / 3 = 303.
-            if(val === "303") {
-                disp.innerHTML += `<p style='color:#a0522d'>> АНОМАЛИЯ: 303 часа — это более 12 дней. Сара лгала в протоколе. <br> Под давлением она призналась: "Вход запечатан на глубине, равной результату вычисления Бергмана (Таланты * Цари)".</p>`;
-                disp.innerHTML += `<p>> <b>ЗАДАЧА 3:</b> Вычислите глубину/расстояние в локтях. <br> (Число талантов из 3 Цар 10:14) * (Число царей из досье Бергмана).</p>`;
-                step = 3;
-            } else { alert("ЛОЖЬ: Время в протоколе не совпадает."); }
-        }
-        else if(step === 3) {
-            // Таланты (666) * Цари (31) = 20646.
-            if(val === "20646") {
-                alert("СТЕНА ВСКРЫТА! На расстоянии 20646 локтей от начальной точки обнаружена скрытая камера. Внутри — печать и архив Свитков Мертвого моря, похищенный ранее. Сара и Бергман планировали вывезти их вместе.");
-                location.reload();
-            } else { alert("ПУСТОТА: Вы бьете не в ту стену."); }
-        }
-        document.getElementById('user-input').value = "";
     }
+
+    function openDossier(key) {
+        const modal = document.getElementById('full-dossier');
+        const content = document.getElementById('dossier-content');
+        const p = db[key];
+        
+        content.innerHTML = `
+            <div class="dossier-grid">
+                <div class="photo-side">
+                    <div class="photo-placeholder">PHOTO: ${p.name.toUpperCase()}</div>
+                    <p><b>ID:</b> ${p.id}</p>
+                    <p><b>ВОЗРАСТ:</b> ${p.age}</p>
+                    <hr border-color="#333">
+                    <p style="color:var(--gold)">СТАТУС: ПОД НАБЛЮДЕНИЕМ</p>
+                </div>
+                <div class="info-side">
+                    <h1 style="color:var(--gold); margin-top:0;">ЛИЧНОЕ ДЕЛО: ${p.name}</h1>
+                    <div style="line-height:1.6; font-size:1.1em;">${p.full}</div>
+                </div>
+            </div>
+        `;
+        modal.style.display = 'block';
+    }
+
+    function closeDossier() {
+        document.getElementById('full-dossier').style.display = 'none';
+    }
+
+    function handleLogic() {
+        const val = document.getElementById('main-input').value;
+        const log = document.getElementById('log-content');
+
+        if(currentStep === 1 && val === "0.1368") {
+            currentStep = 2;
+            log.innerHTML += `<p style="color:var(--accent)">> <b>УСПЕХ:</b> Координаты X подтверждены. Абу Саид локализован в подвале дома #35.23.</p>`;
+            log.innerHTML += `<p>> <b>НОВЫЕ ДАННЫЕ:</b> Досье Сары Леви обновлено. Мы нашли её переписку.</p>`;
+            
+            // Обновляем досье Сары (она становится "полнее")
+            db.sara.unlocked = true;
+            db.sara.full += "<br><br><b style='color:red'>НОВОЕ:</b> Сара перевела 300,000 шекелей на офшорный счет Даниэля. Она знала о краже за неделю!";
+            init(); // Перерисовываем список
+        } else {
+            alert("ДАННЫЕ НЕ СОВПАДАЮТ С АРХИВОМ IAA");
+        }
+    }
+
+    init();
 </script>
 
 </body>
