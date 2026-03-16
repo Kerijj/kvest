@@ -2,101 +2,56 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>S.I.A. TERMINAL | CASE #77-B v2.0</title>
+    <title>S.I.A. TERMINAL | CASE #77-B</title>
     <style>
         :root { 
             --gold: #c2b280; --bg: #0a0a0a; --panel: #111; 
             --text: #d1c7ac; --red: #ff3333; --cyan: #00cccc; --green: #00ff66; 
         }
-        
         body { 
             background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; 
             margin: 0; padding: 20px; display: flex; justify-content: center; overflow: hidden; 
         }
-        
         #case-file { 
             max-width: 1100px; width: 100%; background: #0d0d0d; border: 1px solid #333; 
-            height: 90vh; padding: 25px; display: flex; flex-direction: column; gap: 20px; 
-            box-shadow: 0 0 50px #000; box-sizing: border-box; position: relative;
+            height: 95vh; padding: 25px; display: flex; flex-direction: column; gap: 15px; 
+            box-shadow: 0 0 50px #000; box-sizing: border-box;
         }
+        header { border-bottom: 2px solid var(--gold); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         
-        header { 
-            border-bottom: 2px solid var(--gold); padding-bottom: 10px; 
-            display: flex; justify-content: space-between; align-items: center; 
-        }
+        .top-row { display: grid; grid-template-columns: 1fr 320px; gap: 20px; height: 220px; }
+        #display-box { background: #000; border: 1px solid #444; padding: 15px; border-left: 5px solid var(--gold); overflow-y: auto; font-size: 0.9em; }
         
-        /* ВЕРХНЯЯ ПАНЕЛЬ: Вывод текста и список досье */
-        .top-row { display: grid; grid-template-columns: 1fr 350px; gap: 20px; height: 250px; }
-        
-        #display-box { 
-            background: #000; border: 1px solid #444; padding: 15px; 
-            border-left: 5px solid var(--gold); overflow-y: auto; font-size: 0.95em; line-height: 1.5;
-        }
-        
-        .suspect-list { 
-            background: var(--panel); border: 1px solid #333; padding: 10px; overflow-y: auto; 
-        }
-        
-        .suspect-card { 
-            background: #1a1a1a; padding: 10px; border: 1px solid #333; 
-            margin-bottom: 5px; cursor: pointer; font-size: 0.8em; transition: 0.2s; 
-        }
-        
+        .suspect-list { background: var(--panel); border: 1px solid #333; padding: 10px; overflow-y: auto; }
+        .suspect-card { background: #1a1a1a; padding: 8px; border: 1px solid #333; margin-bottom: 5px; cursor: pointer; font-size: 0.75em; }
         .suspect-card:hover { border-color: var(--gold); background: #222; }
 
-        /* ЦЕНТРАЛЬНАЯ ПАНЕЛЬ: Интерактив (Сейф, Лаба, Локации) */
         #action-zone { 
             flex-grow: 1; background: #050505; border: 1px solid #222; 
-            display: flex; align-items: center; justify-content: center; position: relative; 
-            border-radius: 4px; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; border-radius: 4px;
+            position: relative;
         }
-        
-        /* Сейф */
-        .safe-ui { text-align: center; }
+
         .safe-dial { 
-            width: 80px; height: 80px; border: 3px double var(--gold); border-radius: 50%; 
+            width: 70px; height: 70px; border: 3px double var(--gold); border-radius: 50%; 
             display: inline-flex; align-items: center; justify-content: center; 
-            font-size: 2em; cursor: pointer; background: #000; margin: 0 10px; user-select: none;
-        }
-        
-        /* Лаба */
-        .lab-ui { display: flex; gap: 20px; }
-
-        /* Серверная */
-        .server-ui { 
-            display: flex; flex-direction: column; align-items: center; gap: 15px; 
-            color: var(--green); font-family: monospace; font-size: 1.1em;
-        }
-        .server-input { 
-            background: #000; border: 1px solid var(--green); color: var(--green); 
-            padding: 10px; font-size: 1.2em; text-align: center; width: 250px;
+            font-size: 1.8em; cursor: pointer; background: #000; margin: 0 10px; 
+            user-select: none;
         }
 
-        /* НИЖНЯЯ ПАНЕЛЬ: Навигация и Улики */
-        .bottom-row { display: grid; grid-template-columns: 1fr 350px; gap: 20px; height: 120px; }
-        
-        .nav-menu { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
-        
-        #clues-box { 
-            background: #111; border: 1px solid #333; padding: 10px; 
-            font-size: 0.8em; color: var(--gold); overflow-y: auto;
-        }
+        .server-input { background: #000; border: 1px solid var(--green); color: var(--green); padding: 10px; font-size: 1.2em; text-align: center; width: 200px; margin-bottom: 10px; outline: none; }
 
-        button { 
-            background: #1a1a1a; color: var(--text); border: 1px solid #444; 
-            padding: 12px 18px; cursor: pointer; font-size: 0.75em; 
-            text-transform: uppercase; transition: 0.3s; 
-        }
-        
-        button:hover:not(:disabled) { background: var(--gold); color: #000; border-color: #fff; }
-        button:disabled { opacity: 0.1; cursor: not-allowed; }
-        button.active-loc { border-color: var(--cyan); background: #002222; color: var(--cyan); }
-        button.urgent { border-color: var(--red); color: var(--red); font-weight: bold; }
+        .bottom-row { display: grid; grid-template-columns: 1fr 320px; gap: 20px; height: 110px; }
+        .nav-menu { display: flex; gap: 8px; flex-wrap: wrap; }
+        #clues-box { background: #111; border: 1px solid #333; padding: 8px; font-size: 0.75em; color: var(--gold); overflow-y: auto; }
 
+        button { background: #1a1a1a; color: var(--text); border: 1px solid #444; padding: 10px 14px; cursor: pointer; font-size: 0.7em; text-transform: uppercase; }
+        button:hover:not(:disabled) { background: var(--gold); color: #000; }
+        button:disabled { opacity: 0.1; }
+        button.active-loc { border-color: var(--cyan); background: #002222; }
+        
         .hidden { display: none !important; }
         .highlight { color: var(--gold); font-weight: bold; }
-        .critical { animation: pulse 1s infinite; }
-        @keyframes pulse { 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
@@ -104,237 +59,196 @@
 <div id="case-file">
     <header>
         <div>
-            <h2 style="margin:0; letter-spacing: 2px;">S.I.A. TERMINAL | CASE #77-B v2.0</h2>
-            <small id="status-line" style="color:var(--cyan)">СТАТУС: ПОДБОР КОДА К СЕЙФУ</small>
+            <h2 style="margin:0; letter-spacing: 1px;">S.I.A. TERMINAL | CASE #77-B</h2>
+            <small id="status-line" style="color:var(--cyan)">ЛОКАЦИЯ: ОФИС</small>
         </div>
-        <div id="timer" class="critical" style="color:var(--red); font-size: 1.6em; font-weight: bold;">35:00</div>
+        <div id="timer" style="color:var(--red); font-size: 1.5em; font-weight: bold;">40:00</div>
     </header>
 
     <div class="top-row">
         <div id="display-box">
-            <span class="highlight">[СИСТЕМА]:</span> Алмазы "Слезы Нептуна" исчезли. Камеры были отключены вручную.<br><br>
-            Вам нужно взломать систему безопасности. <br>
-            <b>ПОДСКАЗКА ДЛЯ КОДА:</b><br>
-            1. Последняя цифра жетона Алона.<br>
-            2. Первая цифра стажа ювелира Ицхака.<br>
-            3. Первая цифра ID-номера курьера Марка.
+            <span class="highlight">[СИСТЕМА]:</span> Алмазы похищены. <br><br>
+            <b>ИНСТРУКЦИЯ:</b> Используйте досье справа, чтобы найти код от сейфа. <br>
+            Код = [Посл. цифра жетона Алона] - [1-я цифра стажа Ицхака] - [1-я цифра ID Марка].
         </div>
-        <div class="suspect-list" id="suspects">
-            </div>
+        <div class="suspect-list" id="suspects"></div>
     </div>
 
     <div id="action-zone">
-        <div id="module-safe" class="safe-ui">
-            <div class="safe-dial" onclick="spin(0)" id="d0">0</div>
-            <div class="safe-dial" onclick="spin(1)" id="d1">0</div>
-            <div class="safe-dial" onclick="spin(2)" id="d2">0</div>
-            <br><br>
-            <button onclick="tryUnlock()">ВЗЛОМАТЬ ЗАМОК</button>
+        <div id="mod-safe" class="safe-ui">
+            <div style="text-align: center;">
+                <div class="safe-dial" onclick="spin(0)" id="d0">0</div>
+                <div class="safe-dial" onclick="spin(1)" id="d1">0</div>
+                <div class="safe-dial" onclick="spin(2)" id="d2">0</div>
+                <p><button onclick="checkSafe()" style="margin-top:20px; width:200px;">ВЗЛОМАТЬ СЕЙФ</button></p>
+            </div>
         </div>
 
-        <div id="module-lab" class="lab-ui hidden">
-            <button onclick="runLab('uv')">СКАНИРОВАТЬ НА ПИГМЕНТ</button>
-            <button onclick="runLab('solvent')">ТЕСТ РАСТВОРИТЕЛЕМ "X"</button>
+        <div id="mod-lab" class="hidden">
+            <button onclick="lab('uv')">УФ-СКАНИРОВАНИЕ</button>
+            <button onclick="lab('chem')">ТЕСТ РАСТВОРИТЕЛЕМ</button>
         </div>
 
-        <div id="module-server" class="server-ui hidden">
-            <span style="color:var(--cyan)"><b>ВЗЛОМ БАЗЫ ДАННЫХ</b></span>
-            <p style="font-size: 0.8em; opacity: 0.7;">Логи за 12:00 удалены Дани.<br>Введите Пароль Администратора, чтобы восстановить удаленный кэш.</p>
-            <span style="color:var(--cyan)">HINT: Дани (IT) - Пароль Админа = [Жетон_IT] + [Жетон_Охраны]</span>
-            <input type="text" id="server-pass" class="server-input" placeholder="Введите код (например: 123456)">
-            <button onclick="checkServerPass()" style="width: 150px; border-color:var(--green)">ВЗЛОМАТЬ</button>
+        <div id="mod-server" class="hidden" style="text-align:center">
+            <p style="color:var(--green); margin-bottom: 15px;">ВВЕДИТЕ КЛЮЧ АДМИНИСТРАТОРА <br>(Сумма жетонов Дани и Алона):</p>
+            <input type="text" id="pass" class="server-input"><br>
+            <button onclick="checkServer()">ВЫПОЛНИТЬ ВЗЛОМ</button>
         </div>
 
-        <div id="module-text" class="hidden" style="padding: 30px; text-align: left; width: 80%;">
-            <p id="location-desc" style="font-size: 1.1em; line-height: 1.6;"></p>
+        <div id="mod-text" class="hidden" style="padding:20px; text-align:center; max-width: 80%;">
+            <p id="loc-desc" style="font-size: 1.2em;"></p>
         </div>
     </div>
 
     <div class="bottom-row">
         <div class="nav-menu">
-            <button id="btn-office" class="active-loc" onclick="changeLoc('office')">ОФИС</button>
-            <button id="btn-lab" class="hidden" onclick="changeLoc('lab')">ЛАБОРАТОРИЯ</button>
-            <button id="btn-post" class="hidden" onclick="changeLoc('post')">КУРЬЕРСКАЯ СЛУЖБА</button>
-            <button id="btn-server" class="hidden" onclick="changeLoc('server')">СЕРВЕРНАЯ</button>
-            <button id="btn-workshop" class="hidden" onclick="changeLoc('workshop')">МАСТЕРСКАЯ</button>
-            <button id="btn-airport" class="hidden urgent" onclick="changeLoc('airport')">АЭРОПОРТ</button>
+            <button id="btn-office" class="active-loc" onclick="go('office')">ОФИС</button>
+            <button id="btn-lab" class="hidden" onclick="go('lab')">ЛАБОРАТОРИЯ</button>
+            <button id="btn-post" class="hidden" onclick="go('post')">ПОЧТА</button>
+            <button id="btn-server" class="hidden" onclick="go('server')">СЕРВЕРНАЯ</button>
+            <button id="btn-workshop" class="hidden" onclick="go('workshop')">МАСТЕРСКАЯ</button>
+            <button id="btn-airport" class="hidden" style="color:var(--red)" onclick="go('airport')">АЭРОПОРТ</button>
         </div>
         <div id="clues-box">
-            <div style="opacity: 0.5; font-size: 0.7em; margin-bottom: 5px; text-transform: uppercase;">Журнал Улик:</div>
+            <div style="opacity:0.5; font-size:0.7em; margin-bottom: 5px;">ЖУРНАЛ УЛИК:</div>
             <div id="clues-list"></div>
         </div>
     </div>
 </div>
 
 <script>
-    const suspectsData = [
-        { name: "Алон (Охрана)", bio: "Жетон №48<b>3</b>. Увлекается альпинизмом. В момент кражи был у задней двери." },
-        { name: "Ицхак (Ювелир)", bio: "Стаж: <b>1</b>5 лет в компании. Эксперт по огранке." },
-        { name: "Марк (Курьер)", bio: "ID: <b>2</b>-00-9. Доставил посылку с пометкой 'Фурнитура' Эли." },
-        { name: "Эли (Механик)", bio: "Специалист по химии и металлам. Дружит с Марком. Владеет серой курткой." },
-        { name: "Сара (Жена)", bio: "Жена владельца. Крупно проиграла в казино. Слышала, как Ицхак заказывал лак." },
-        { name: "Дани (IT)", bio: "Жетон №<b>909</b>. Зафиксировал хакерскую атаку. Удалил логи посещений за 12:00." }
+    const suspects = [
+        { name: "Алон (Охрана)", bio: "Жетон №48<b>3</b>. Альпинист, всегда в тальке. Был у входа в 12:00." },
+        { name: "Ицхак (Ювелир)", bio: "Стаж: <b>1</b>5 лет. Мастер огранки. Утверждает, что был в подсобке." },
+        { name: "Марк (Курьер)", bio: "ID: <b>2</b>-00-9. Доставил ящик. Одет в серую куртку." },
+        { name: "Эли (Механик)", bio: "Химик. Заказывал серый лак и пуговицы." },
+        { name: "Сара (Жена)", bio: "Видели в кафе с Марком утром. Крупный долг." },
+        { name: "Дани (IT)", bio: "Жетон №<b>909</b>. Удалил логи системы якобы из-за сбоя." }
     ];
 
-    let state = {
-        safeCode: [3, 1, 2],
-        serverCode: 1392, // 909 (Дани) + 483 (Алон)
-        dials: [0, 0, 0],
-        clues: [],
-        currentLoc: 'office',
-        timeLeft: 2100,
-        isLabDone: false,
-        isServerUnlocked: false
+    let state = { 
+        dials: [0, 0, 0], 
+        clues: [], 
+        time: 2400, 
+        isSafeOpened: false,
+        isServerUnlocked: false 
     };
 
     function init() {
         const list = document.getElementById('suspects');
-        suspectsData.forEach((s, i) => {
-            const div = document.createElement('div');
-            div.className = "suspect-card";
-            div.innerHTML = `<strong>${s.name}</strong><br><small>Открыть архив...</small>`;
-            div.onclick = () => {
-                document.getElementById('display-box').innerHTML = `<span class="highlight">[ДОСЬЕ]: ${s.name}</span><br><br>${s.bio}`;
-                addClue(`Досье: ${s.name}`);
+        suspects.forEach(s => {
+            const d = document.createElement('div');
+            d.className = "suspect-card";
+            d.innerHTML = `<strong>${s.name}</strong><br><small>Личное дело...</small>`;
+            d.onclick = () => { 
+                document.getElementById('display-box').innerHTML = `<span class="highlight">[ДОСЬЕ]:</span> ${s.bio}`; 
             };
-            list.appendChild(div);
+            list.appendChild(d);
         });
-        startTimer();
+
+        setInterval(() => {
+            state.time--;
+            let m = Math.floor(state.time/60), s = state.time%60;
+            document.getElementById('timer').innerText = `${m}:${s<10?'0'+s:s}`;
+            if(state.time <= 0) { alert("ВРЕМЯ ВЫШЛО!"); location.reload(); }
+        }, 1000);
     }
 
-    function spin(i) {
-        state.dials[i] = (state.dials[i] + 1) % 10;
-        document.getElementById(`d${i}`).innerText = state.dials[i];
+    function spin(i) { 
+        state.dials[i] = (state.dials[i] + 1) % 10; 
+        document.getElementById(`d${i}`).innerText = state.dials[i]; 
     }
 
-    function tryUnlock() {
-        if (JSON.stringify(state.dials) === JSON.stringify(state.safeCode)) {
-            document.getElementById('display-box').innerHTML = `<span class="highlight">[СИСТЕМА]: ДОСТУП РАЗРЕШЕН.</span><br><br>Сейф открыт. На дне обнаружен белый налет и накладная на имя Марка.<br><br><b>ПУТЬ НАЙДЕН:</b> Идите в Лабораторию.`;
-            addClue("Белый налет из сейфа");
+    function checkSafe() {
+        if (state.dials.join('') === '312') {
+            state.isSafeOpened = true;
+            document.getElementById('display-box').innerHTML = "<span class='highlight'>[УСПЕХ]:</span> Сейф открыт. Внутри белый порошок и накладная. Переходите в ЛАБОРАТОРИЮ.";
+            addClue("Белый налет"); 
             unlock('lab');
+            go('lab');
         } else {
-            alert("Код не подходит. Время сокращено на 2 минуты!");
-            state.timeLeft -= 120;
+            alert("Код неверный!");
         }
     }
 
-    function runLab(type) {
-        const out = document.getElementById('display-box');
-        if(type === 'uv') {
-            out.innerHTML = "<span class='highlight'>[ЛАБОРАТОРИЯ]:</span> УФ-сканер выявил частицы серого матового пигмента. Они забились под замок.";
-        } else {
-            out.innerHTML = "<span class='highlight'>[ЛАБОРАТОРИЯ]:</span> Тест растворителем показал, что это смесь талька и матового лака. При нанесении на алмаз он делает его похожим на обычный железный болт или пуговицу.<br><br><b>ПУТЬ НАЙДЕН:</b> Проверьте Почту.";
-            addClue("Секрет маскировки: Серый лак");
-            state.isLabDone = true;
+    function lab(type) {
+        if (type === 'chem') {
+            document.getElementById('display-box').innerHTML = "Тест показал: это матовый серый лак. Он делает алмазы похожими на металл. Проверьте ПОЧТУ.";
+            addClue("Серый лак"); 
             unlock('post');
-        }
-    }
-
-    function checkServerPass() {
-        const passInput = document.getElementById('server-pass').value;
-        if(passInput == state.serverCode) {
-            state.isServerUnlocked = true;
-            document.getElementById('display-box').innerHTML = `<span class="highlight">[СИСТЕМА]: ВЗЛОМ УСПЕШЕН. ЛОГИ ВОССТАНОВЛЕНЫ.</span><br><br>Лог посещений 12:00: <br>Марк (Курьер) -> Вход.<br>Сара (Жена) -> Вход.<br>Марк -> Выход (через 5 мин с тяжелым ящиком).<br><br><b>ВНИМАНИЕ:</b> Дани удалил лог Марка! Камеры отключены, пока Марк выходил.<br><br><b>ПУТЬ НАЙДЕН:</b> Теперь вы можете осмотреть Мастерскую Эли.`;
-            addClue("Лог: Марк и Дани в 12:00");
-            unlock('workshop');
-            showModule('module-text');
-            document.getElementById('location-desc').innerHTML = "База данных взломана. Восстановленный лог подтверждает: Марк выносил тяжелую посылку, пока Дани отключил камеры. Это была серая куртка.";
+            go('post');
         } else {
-            alert("ПАРОЛЬ НЕВЕРЕН! Время сокращено на 5 минут!");
-            state.timeLeft -= 300;
+            document.getElementById('display-box').innerHTML = "Спектр подтверждает химическое происхождение пигмента.";
         }
     }
 
-    function changeLoc(loc) {
-        state.currentLoc = loc;
+    function checkServer() {
+        if (document.getElementById('pass').value === '1392') {
+            state.isServerUnlocked = true;
+            document.getElementById('display-box').innerHTML = "<span class='highlight'>[ВЗЛОМ]:</span> Лог восстановлен. Дани скрыл выход Марка с грузом. Идите в МАСТЕРСКУЮ.";
+            addClue("Взлом логов Дани"); 
+            unlock('workshop');
+            go('workshop');
+        } else {
+            alert("Доступ запрещен! Ошибка ключа.");
+        }
+    }
+
+    function go(loc) {
+        // Смена активной кнопки
         document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active-loc'));
         document.getElementById(`btn-${loc}`).classList.add('active-loc');
         document.getElementById('status-line').innerText = `ЛОКАЦИЯ: ${loc.toUpperCase()}`;
-
-        hideAllModules();
-
-        const desc = document.getElementById('location-desc');
-        const out = document.getElementById('display-box');
-
-        if(loc === 'office') {
-            showModule('module-safe');
-            out.innerHTML = "Центральный офис. Сейф взломан, но логи системы удалены.";
-        } else if(loc === 'lab') {
-            showModule('module-lab');
-            out.innerHTML = "Используйте оборудование для анализа.";
-        } else if(loc === 'post') {
-            showModule('module-text');
-            desc.innerHTML = "<b>КУРЬЕРСКАЯ СЛУЖБА:</b><br>Логи доставок: Механик Эли отправил Марку посылку 'Фурнитура: набор металлических пуговиц'. Зачем механику пуговицы от механика?<br><br><b>СЛЕДУЮЩИЙ ШАГ:</b> Нужно восстановить логи системы. Идите в СЕРВЕРНУЮ.";
-            unlock('server');
-            addClue("Посылка: 10 пуговиц");
-        } else if(loc === 'server') {
-            if(state.isServerUnlocked) {
-                showModule('module-text');
-                desc.innerHTML = "Сервер взломан. Лог Марка восстановлен. Пора проверить Мастерскую.";
-            } else {
-                showModule('module-server');
-                out.innerHTML = "СЕРВЕРНАЯ: Введите код администратора для восстановления удаленных Дани записей.";
-            }
-        } else if(loc === 'workshop') {
-            showModule('module-text');
-            desc.innerHTML = "<b>МАСТЕРСКАЯ ЭЛИ:</b><br>На столе найден билет на самолет на имя Эли. На чертеже — куртка, на которой алмазы замаскированы под пуговицы. ПУГОВИЦЫ С ПОЧТЫ.<br><br><b>ФИНАЛ:</b> Перехватите преступника в Аэропорту.";
-            unlock('airport');
-            addClue("Билет в один конец Эли");
-        } else if(loc === 'airport') {
-            finalAccusation();
-        }
-    }
-
-    function unlock(id) {
-        document.getElementById(`btn-${id}`).classList.remove('hidden');
-    }
-
-    function showModule(id) {
-        document.getElementById(id).classList.remove('hidden');
-    }
-
-    function hideAllModules() {
-        document.getElementById('module-safe').classList.add('hidden');
-        document.getElementById('module-lab').classList.add('hidden');
-        document.getElementById('module-server').classList.add('hidden');
-        document.getElementById('module-text').classList.add('hidden');
-    }
-
-    function addClue(text) {
-        if (!state.clues.includes(text)) {
-            state.clues.push(text);
-            const div = document.createElement('div');
-            div.innerText = `> ${text}`;
-            div.style.marginBottom = "3px";
-            document.getElementById('clues-list').appendChild(div);
-        }
-    }
-
-    function finalAccusation() {
-        const suspect = prompt("ВРЕМЯ НА ИСХОДЕ! КТО ПРЕСТУПНИК?");
-        const method = prompt("ГДЕ СПРЯТАНЫ АЛМАЗЫ? (Назовите предмет)");
         
-        if (suspect && suspect.toLowerCase().includes("эли") && 
-           (method.toLowerCase().includes("пуговиц") || method.toLowerCase().includes("куртк"))) {
-            alert("ПОБЕДА, ДЕТЕКТИВ! \n\nВы задержали Эли на досмотре. Алмазы были покрыты лаком под металл (секрет маскировки) и пришиты к его куртке под видом пуговиц (полученных с почты). Сара оплатила работу, а Марк и Дани обеспечили вынос (взлом сервера). Дело закрыто!");
+        // Прячем все модули
+        document.getElementById('mod-safe').classList.add('hidden');
+        document.getElementById('mod-lab').classList.add('hidden');
+        document.getElementById('mod-server').classList.add('hidden');
+        document.getElementById('mod-text').classList.add('hidden');
+
+        // Показываем нужный модуль
+        if (loc === 'office') {
+            document.getElementById('mod-safe').classList.remove('hidden');
+        } else if (loc === 'lab') {
+            document.getElementById('mod-lab').classList.remove('hidden');
+        } else if (loc === 'server') {
+            document.getElementById('mod-server').classList.remove('hidden');
+        } else if (loc === 'airport') {
+            final();
         } else {
-            alert("ПРОВАЛ... \n\nВы задержали не того или не смогли доказать, как вынесены камни. Настоящий преступник уже улетел.");
+            document.getElementById('mod-text').classList.remove('hidden');
+            let desc = document.getElementById('loc-desc');
+            if (loc === 'post') {
+                desc.innerHTML = "<b>ПОЧТА:</b> Найдена посылка 'Пуговицы для декора'. Отправитель: Эли. <br><br>Странно... Чтобы узнать больше о перемещениях, идите в СЕРВЕРНУЮ.";
+                unlock('server');
+            } else if (loc === 'workshop') {
+                desc.innerHTML = "<b>МАСТЕРСКАЯ:</b> Найден билет Эли на самолет и план маскировки алмазов под пуговицы. <br><br>Пора в АЭРОПОРТ!";
+                unlock('airport');
+            }
+        }
+    }
+
+    function unlock(id) { document.getElementById(`btn-${id}`).classList.remove('hidden'); }
+    
+    function addClue(t) { 
+        if (!state.clues.includes(t)) {
+            state.clues.push(t); 
+            document.getElementById('clues-list').innerHTML += `<div style="margin-bottom:2px;">> ${t}</div>`;
+        }
+    }
+
+    function final() {
+        let name = prompt("КТО ПРЕСТУПНИК?");
+        let item = prompt("ГДЕ СПРЯТАНЫ АЛМАЗЫ? (Одно слово)");
+        if (name && name.toLowerCase().includes("эли") && item && item.toLowerCase().includes("пуговиц")) {
+            alert("БЛЕСТЯЩЕ! Эли задержан. Алмазы были пришиты к его куртке под видом пуговиц. Дело закрыто!");
+        } else {
+            alert("ОШИБКА. Вор скрылся.");
         }
         location.reload();
     }
 
-    function startTimer() {
-        setInterval(() => {
-            state.timeLeft--;
-            const m = Math.floor(state.timeLeft / 60);
-            const s = state.timeLeft % 60;
-            document.getElementById('timer').innerText = `${m}:${s < 10 ? '0' + s : s}`;
-            if (state.timeLeft <= 0) { alert("ВРЕМЯ ВЫШЛО! Преступник улетел."); location.reload(); }
-        }, 1000);
-    }
-
     init();
 </script>
-
 </body>
 </html>
