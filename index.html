@@ -2,213 +2,161 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>CENTRAL INTELLIGENCE: CASE #77-B</title>
+    <title>OSINT TERMINAL | QUANTUM DYNAMICS</title>
     <style>
-        :root { --gold: #c2b280; --bg: #030303; --border: #222; --text: #8e8775; --alert: #ff0000; --active: #00ffff; }
-        body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        :root { --neon: #00ff41; --bg: #0a0a0a; --dim: #003b00; --warn: #ffb000; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Consolas', monospace; margin: 0; padding: 20px; }
         
-        #main-frame { max-width: 1400px; width: 100%; background: #080808; border: 1px solid var(--border); min-height: 90vh; padding: 40px; box-sizing: border-box; }
-        header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
+        #console { max-width: 1200px; margin: 0 auto; border: 1px solid var(--dim); padding: 20px; min-height: 90vh; box-shadow: 0 0 20px rgba(0,255,65,0.05); }
+        header { border-bottom: 2px solid var(--dim); padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; }
         
-        .grid-system { display: grid; grid-template-columns: 1fr 450px; gap: 50px; }
+        .layout { display: grid; grid-template-columns: 1fr 400px; gap: 30px; }
+        #output { background: #000; border: 1px solid #111; padding: 20px; min-height: 400px; border-left: 3px solid var(--neon); overflow-y: auto; margin-bottom: 20px; }
         
-        #terminal-display { background: #000; border: 1px solid #111; padding: 30px; min-height: 450px; position: relative; border-left: 3px solid #333; overflow-y: auto; }
-        .highlight { color: var(--gold); font-weight: bold; }
+        .module { display: none; background: #0d0d0d; border: 1px solid var(--dim); padding: 20px; }
+        .input-cmd { background: transparent; border: none; border-bottom: 1px solid var(--neon); color: var(--neon); width: 100%; font-size: 1.2em; outline: none; margin: 10px 0; }
         
-        .module-box { display: none; margin-top: 25px; padding: 20px; border: 1px solid #1a1a1a; background: #0a0a0a; }
-        .input-line { background: #000; border: 1px solid #333; color: var(--gold); padding: 15px; width: 300px; font-family: inherit; font-size: 1.2em; text-align: center; outline: none; margin: 10px 0; }
+        .nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        button { background: #000; border: 1px solid var(--dim); color: var(--dim); padding: 12px; cursor: pointer; text-transform: uppercase; font-size: 0.8em; }
+        button:hover:not(:disabled) { border-color: var(--neon); color: var(--neon); }
+        button.unlocked { color: var(--warn); border-color: var(--warn); }
         
-        .btn-group { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 30px; }
-        button { background: #0d0d0d; border: 1px solid #222; color: #555; padding: 18px; cursor: pointer; text-transform: uppercase; font-size: 0.75em; letter-spacing: 2px; transition: 0.3s; }
-        button:hover:not(:disabled) { border-color: var(--gold); color: #fff; background: #111; }
-        button:disabled { opacity: 0.05; }
-        
-        .side-bar { background: #0a0a0a; padding: 25px; border: 1px solid #151515; }
-        .card { border: 1px solid #222; padding: 15px; margin-bottom: 15px; cursor: pointer; font-size: 0.8em; line-height: 1.4; }
-        .card:hover { background: #111; border-color: #444; }
-        .clue-item { display: inline-block; border: 1px solid #333; padding: 5px 10px; margin: 5px; font-size: 0.7em; color: var(--gold); }
-        
-        #timer { font-size: 2em; color: var(--alert); letter-spacing: 2px; }
-        .cargo-cell { border: 1px solid #222; padding: 10px; text-align: center; cursor: pointer; font-size: 0.7em; }
-        .cargo-cell:hover { border-color: var(--active); }
-        .active-cell { border-color: var(--active) !important; color: var(--active); }
+        .dossier { font-size: 0.8em; border: 1px solid var(--dim); padding: 15px; margin-bottom: 10px; }
+        .clue { color: var(--warn); font-size: 0.75em; border: 1px dashed var(--warn); padding: 5px; margin-top: 5px; display: inline-block; }
     </style>
 </head>
 <body>
 
-<div id="main-frame">
+<div id="console">
     <header>
-        <div>
-            <h1 style="margin:0; letter-spacing: 8px;">ENCRYPTED SESSION: 0x77B</h1>
-            <small>CURRENT DATE: MARCH 16, 2026</small>
-        </div>
-        <div id="timer">60:00</div>
+        <div>SYSTEM: KERNEL_V.4.0.1 | STATUS: SECURITY_BREACH</div>
+        <div id="timer">01:00:00</div>
     </header>
 
-    <div class="grid-system">
-        <div class="terminal-core">
-            <div id="terminal-display">
-                <p class="highlight">[СИСТЕМНЫЙ ВХОД ЗАБЛОКИРОВАН]</p>
-                <p>Обнаружено нарушение целостности хранилища. Канал передачи данных поврежден. <br><br>
-                Для инициализации сессии введите <b>Мастер-Ключ Охраны</b>. <br>
-                <i>Формула ключа: (ID_Алона + Стаж_Алона) + (ID_Дорона + Стаж_Дорона).</i><br>
-                <small>*Стаж считается как полных лет на текущий 2026 год относительно года рождения.</small></p>
+    <div class="layout">
+        <div class="main">
+            <div id="output">
+                <p>> Инициализация системы...</p>
+                <p>> ВНИМАНИЕ: Зафиксирована аномалия в криогенном контуре. Прототип Q-1 исчез из вакуумной камеры. <br>
+                > Система безопасности была деактивирована через терминал администратора подсети <b>192.168.10.x</b>.</p>
+                <p>> ЗАДАЧА: Вычислите IP-адрес администратора. <br>
+                <i>Подсказка: IP-адрес — это (Номер кабинета инженера).(Этаж).(Сдвиг частоты Wi-Fi в MHz).</i></p>
             </div>
 
-            <div id="mod-safe" class="module-box" style="display:block; text-align: center;">
-                <input type="number" id="input-safe" class="input-line" placeholder="MASTER_KEY">
-                <br>
-                <button onclick="valSafe()">RUN_AUTH</button>
+            <div id="mod-net" class="module" style="display:block;">
+                <p class="highlight">GATEWAY_LOGIN:</p>
+                <input type="text" id="net-input" class="input-cmd" placeholder="XXX.XXX.XXX.XXX">
+                <button onclick="checkNet()">CONNECT</button>
             </div>
 
-            <div id="mod-lab" class="module-box">
-                <p class="highlight">СПЕКТРОМЕТРИЯ: ОБРАЗЕЦ #19</p>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <button id="r1" onclick="selR('r1')">C3H8O (Изопропил)</button>
-                    <button id="r2" onclick="selR('r2')">AgNO3 (Серебро)</button>
-                    <button id="r3" onclick="selR('r3')">HNO3 (Кислота)</button>
-                    <button id="r4" onclick="selR('r4')">C14H9N3O2 (Люминол)</button>
-                </div>
-                <button onclick="valLab()" style="width:100%; margin-top:20px; border-color:var(--active)">START_SCAN</button>
+            <div id="mod-cryo" class="module">
+                <p class="highlight">АНАЛИЗ ТЕМПЕРАТУРНЫХ ПИКОВ:</p>
+                <p>Процессор Q-1 выделяет 25Вт тепла при работе. Сопоставьте расход азота (л/ч) с тепловыделением, чтобы найти момент извлечения.</p>
+                <input type="number" id="cryo-input" class="input-cmd" placeholder="ВВЕДИТЕ ВРЕМЯ (ЧЧММ)">
+                <button onclick="checkCryo()">ANALYZE_THERMAL</button>
             </div>
 
-            <div id="mod-workshop" class="module-box" style="text-align: center;">
-                <p class="highlight">СТАНОК ДЕШИФРОВКИ</p>
-                <p>Введите двоичный код из досье Дорона для перевода накладной в десятичный вид:</p>
-                <input type="text" id="input-bin" class="input-line" placeholder="00000000">
-                <br>
-                <button onclick="valBin()">DECODE_BINARY</button>
+            <div id="mod-wifi" class="module">
+                <p class="highlight">RF_SPECTRUM_ANALYSIS:</p>
+                <div id="spectrum" style="height:100px; border:1px solid #222; margin:10px 0; background: repeating-linear-gradient(90deg, #000, #000 10px, #050505 10px, #050505 20px);"></div>
+                <p>Анализ частот 2.4GHz и 5GHz. Введите номер канала, на котором произошла утечка пакетов.</p>
+                <input type="number" id="wifi-input" class="input-cmd" placeholder="CHANNEL_ID">
+                <button onclick="checkWifi()">EXECUTE_OSINT</button>
             </div>
 
-            <div id="mod-cargo" class="module-box">
-                <p class="highlight">ЛОГИСТИКА: СЕКТОР B-4</p>
-                <div id="cargo-grid" style="display:grid; grid-template-columns: repeat(5,1fr); gap:10px;"></div>
-            </div>
-
-            <div class="btn-group">
-                <button id="btn-safe" onclick="showM('mod-safe')">Главная</button>
-                <button id="btn-lab" class="hidden" onclick="showM('mod-lab')">Лаборатория</button>
-                <button id="btn-workshop" class="hidden" onclick="showM('mod-workshop')">Мастерская</button>
-                <button id="btn-cargo" class="hidden" onclick="showM('mod-cargo')">Склад</button>
-                <button id="btn-final" class="hidden" style="border-color:var(--alert)" onclick="final()">Аэропорт</button>
+            <div class="nav">
+                <button onclick="showM('mod-net')">СЕТЬ</button>
+                <button id="btn-cryo" disabled onclick="showM('mod-cryo')">КРИО-ЛОГ</button>
+                <button id="btn-wifi" disabled onclick="showM('mod-wifi')">WIFI-СКАН</button>
+                <button id="btn-final" disabled style="border-color:red" onclick="finalAccusation()">ОТЧЕТ СБ</button>
             </div>
         </div>
 
-        <div class="side-bar">
-            <h3 style="font-size:0.7em; color:var(--gold)">DATABASE: PERSONNEL</h3>
-            <div id="personnel-list"></div>
-            <h3 style="font-size:0.7em; color:var(--gold); margin-top:30px;">DATABASE: EVIDENCE</h3>
-            <div id="clue-list"></div>
+        <div class="side">
+            <h3 style="font-size:0.8em;">БАЗА СОТРУДНИКОВ:</h3>
+            <div id="staff"></div>
+            <h3 style="font-size:0.8em; margin-top:20px;">ПЕРЕХВАЧЕННЫЕ ДАННЫЕ:</h3>
+            <div id="clues"></div>
         </div>
     </div>
 </div>
 
 <script>
-    const data = {
-        alon: { name: "Алон (СБ)", info: "ID: 310. Родился: 1985. Ветеран службы. В 14:02 отошел за кофе, оставив терминал Дорону." },
-        doron: { name: "Дорон (Техник)", info: "ID: 102. Родился: 1993. Оставил в системе двоичный след: <b>00110010</b>. Племянник Эли." },
-        eli: { name: "Эли (Механик)", info: "Специалист по 'серебряному напылению'. В мастерской найден флакон AgNO3. Бывший циркач." },
-        mark: { name: "Марк (Курьер)", info: "Везет груз 'A-1'. Вес нетто: 488г. Упаковка весит столько же, сколько 'Сдвиг Дорона' (десятичное число из его бинарного кода)." }
+    const db = {
+        ivanov: { name: "Д-р Иванов (Гл. Инженер)", bio: "Кабинет: 102. Этаж: 4. Частота Wi-Fi его ноутбука: 5500 MHz. В 14:00 зафиксирован скачок азота." },
+        petrov: { name: "Петров (Системщик)", bio: "Доступ к подсети .10. Работает на 2-м этаже. Использует канал 11 (2462 MHz) для отладки." },
+        sidorov: { name: "Сидоров (Лаборант)", bio: "ID: 404. Был замечен в крио-камере в 14:15. Утверждает, что проверял датчики давления." }
     };
 
-    let state = { clues: new Set(), reagents: [], time: 3600 };
+    let state = { clues: new Set(), time: 3600 };
 
     function init() {
-        const pList = document.getElementById('personnel-list');
-        for(let k in data) {
-            const d = document.createElement('div');
-            d.className = 'card';
-            d.innerHTML = `<b>${data[k].name}</b>`;
-            d.onclick = () => { document.getElementById('terminal-display').innerHTML = `<h3>LOG_ENTRY: ${data[k].name}</h3><p>${data[k].info}</p>`; };
-            pList.appendChild(d);
+        const sList = document.getElementById('staff');
+        for(let k in db) {
+            const div = document.createElement('div');
+            div.className = 'dossier';
+            div.innerHTML = `<b>${db[k].name}</b><br><small>Доступ к архиву...</small>`;
+            div.onclick = () => {
+                document.getElementById('output').innerHTML = `<h3>АРХИВ: ${db[k].name}</h3><p>${db[k].bio}</p>`;
+            };
+            sList.appendChild(div);
         }
-        genCargo();
         startClock();
     }
 
-    // ЛОГИКА 1: (310 + (2026-1985)) + (102 + (2026-1993)) = (310+41) + (102+33) = 351 + 135 = 486
-    function valSafe() {
-        if(document.getElementById('input-safe').value === "486") {
-            addC("Доступ: УРОВЕНЬ 1");
-            document.getElementById('terminal-display').innerHTML = `<h3>ДОСТУП РАЗРЕШЕН</h3><p>Сейф вскрыт. Внутри обнаружены следы AgNO3 и театрального грима. <br><br><b>Система:</b> Обнаружены хим. следы. Требуется анализ.</p>`;
-            document.getElementById('btn-lab').classList.remove('hidden');
-            showM('mod-lab');
-        } else { alert("ACCESS_DENIED: Неверный ключ стажа."); }
+    // ЛОГИКА 1: IP = Кабинет(102).Этаж(4).Сдвиг(5500 - стандарт 5000 = 500) -> 102.4.500 (Условно)
+    // Давай упростим формулу для игрока: Кабинет.Этаж.(Частота/100) -> 102.4.55
+    function checkNet() {
+        if(document.getElementById('net-input').value === "102.4.55") {
+            addClue("IP_AUTH: Доступ разрешен");
+            document.getElementById('output').innerHTML = `<h3>СЕТЬ ВЗЛОМАНА</h3><p>Лог доступа: В 14:02 администратор Иванов вошел в систему. Но Иванов был на совещании. Значит, кто-то использовал его IP.</p>`;
+            document.getElementById('btn-cryo').disabled = false;
+            showM('mod-cryo');
+        } else { alert("ERROR: Неверный сетевой адрес."); }
     }
 
-    // ЛОГИКА 2: Эли использует AgNO3 (Серебро) и C3H8O (Изопропил для лака) -> r1 + r2
-    function selR(id) {
-        const b = document.getElementById(id);
-        if(state.reagents.includes(id)) {
-            state.reagents = state.reagents.filter(x => x !== id);
-            b.style.borderColor = "#222";
-        } else if(state.reagents.length < 2) {
-            state.reagents.push(id);
-            b.style.borderColor = "var(--active)";
-        }
+    // ЛОГИКА 2: В досье Иванова указано 14:00 (скачок).
+    function checkCryo() {
+        if(document.getElementById('cryo-input').value === "1400") {
+            addClue("TIME_STAMP: 14:00");
+            document.getElementById('output').innerHTML = `<h3>КРИО-АНАЛИЗ</h3><p>В 14:00 давление упало. Камера была открыта. Спустя 2 минуты трафик из лаборатории резко вырос на канале 11.</p>`;
+            document.getElementById('btn-wifi').disabled = false;
+            showM('mod-wifi');
+        } else { alert("АНАЛИЗ: Аномалий не обнаружено."); }
     }
 
-    function valLab() {
-        if(state.reagents.sort().join('') === 'r1r2') {
-            addC("След: Лак 'Иллюзия'");
-            document.getElementById('terminal-display').innerHTML = `<h3>АНАЛИЗ ЗАВЕРШЕН</h3><p>На перчатке найдены частицы, идентичные лаку в мастерской Эли Рафаэля. <br><br><b>Система:</b> Открыт доступ к мастерской.</p>`;
-            document.getElementById('btn-workshop').classList.remove('hidden');
-            showM('mod-workshop');
-        } else { alert("SCAN_ERROR: Состав не опознан."); }
+    // ЛОГИКА 3: Петров использует канал 11.
+    function checkWifi() {
+        if(document.getElementById('wifi-input').value === "11") {
+            addClue("CHANNEL_ID: 11 (Утечка)");
+            document.getElementById('output').innerHTML = `<h3>OSINT УСПЕШЕН</h3><p>Через канал 11 (устройство Петрова) был передан архив весом 2Гб. Это чертежи процессора Q-1. Теперь нужно сопоставить всё в итоговом отчете.</p>`;
+            document.getElementById('btn-final').disabled = false;
+        } else { alert("SIGNAL ERROR: На этой частоте тишина."); }
     }
 
-    // ЛОГИКА 3: 00110010 (двоичное) = 50 (десятичное).
-    function valBin() {
-        if(document.getElementById('input-bin').value === "50") {
-            addC("Код Сдвига: 50");
-            document.getElementById('terminal-display').innerHTML = `<h3>ДЕШИФРОВКА УСПЕШНА</h3><p>Число 50 получено. Вес упаковки Марка определен. <br><br><b>Система:</b> Рассчитайте итоговый вес брутто и найдите контейнер на складе.</p>`;
-            document.getElementById('btn-cargo').classList.remove('hidden');
-            showM('mod-cargo');
-        } else { alert("DECODE_ERROR: Неверный двоичный код."); }
+    function finalAccusation() {
+        const who = prompt("КТО ПЕРЕДАЛ ДАННЫЕ? (Фамилия)");
+        const tech = prompt("ЧЕЙ IP БЫЛ ИСПОЛЬЗОВАН?");
+        if(who.toLowerCase().includes("петров") && tech.toLowerCase().includes("иванов")) {
+            alert("ПОЗДРАВЛЯЕМ! Вы раскрыли промышленный шпионаж. Петров внедрен конкурентами.");
+        } else { alert("ОШИБКА: Подозреваемый успел удалить логи."); }
+        location.reload();
     }
 
-    // ЛОГИКА 4: Вес нетто 488 + упаковка 50 = 538г.
-    function genCargo() {
-        const g = document.getElementById('cargo-grid');
-        const ws = [488, 500, 538, 550, 488, 538, 512, 538, 600, 538];
-        ws.forEach((w, i) => {
-            const b = document.createElement('div');
-            b.className = 'cargo-cell';
-            b.innerText = `PKG-${700+i}\n${w}г`;
-            b.onclick = () => {
-                if(w === 538 && i === 2) { // Только один правильный слот
-                    b.classList.add('active-cell');
-                    addC("Груз 702 перехвачен");
-                    document.getElementById('terminal-display').innerHTML = `<h3>СКЛАД: ОБЪЕКТ НАЙДЕН</h3><p>В контейнере 702 обнаружены 'стальные пуговицы'. Слой лака скрывает алмаз 400 карат.</p>`;
-                    document.getElementById('btn-final').classList.remove('hidden');
-                } else { b.style.opacity = "0.1"; }
-            };
-            g.appendChild(b);
-        });
-    }
-
-    function final() {
-        const ans = prompt("КТО ВИНОВЕН И КАК СКРЫЛ АЛМАЗ? (Напр: Фамилия, способ)");
-        if(ans.toLowerCase().includes("рафаэль") && ans.toLowerCase().includes("пуговицы")) {
-            alert("ДЕЛО ЗАКРЫТО. Эли и Дорон арестованы. Алмаз возвращен государству.");
-            location.reload();
-        } else { alert("ПРОВАЛ: Преступники покинули юрисдикцию."); }
-    }
-
-    function addC(t) {
+    function addClue(t) {
         state.clues.add(t);
-        const l = document.getElementById('clue-list');
+        const l = document.getElementById('clues');
         l.innerHTML = "";
         state.clues.forEach(c => {
             const s = document.createElement('span');
-            s.className = 'clue-item';
+            s.className = 'clue';
             s.innerText = c;
             l.appendChild(s);
         });
     }
 
     function showM(id) {
-        document.querySelectorAll('.module-box').forEach(m => m.style.display = 'none');
+        document.querySelectorAll('.module').forEach(m => m.style.display = 'none');
         document.getElementById(id).style.display = 'block';
     }
 
@@ -220,7 +168,7 @@
         }, 1000);
     }
 
-    window.onload = init;
+    init();
 </script>
 
 </body>
