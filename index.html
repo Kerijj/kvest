@@ -2,40 +2,46 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Case #77-B: Final Terminal</title>
+    <title>Дело #77-B: Призрачный Алмаз — Финальная Версия</title>
     <style>
         :root { --gold: #c2b280; --bg: #050505; --panel: #111; --text: #d1c7ac; --red: #ff3333; --cyan: #00ffff; --lime: #32cd32; }
-        body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; justify-content: center; }
-        #case-file { max-width: 1250px; width: 100%; background: #0d0d0d; border: 1px solid #333; min-height: 95vh; padding: 25px; box-shadow: 0 0 60px #000; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; margin: 0; padding: 20px; display: flex; justify-content: center; line-height: 1.5; }
         
-        header { border-bottom: 2px solid var(--gold); padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .main-layout { display: grid; grid-template-columns: 1fr 400px; gap: 30px; }
-
-        #display { background: #000; border: 1px solid #222; padding: 20px; min-height: 400px; border-radius: 5px; margin-bottom: 20px; font-size: 0.95em; line-height: 1.6; overflow-y: auto; color: #eee; }
-        .highlight { color: var(--gold); font-weight: bold; }
-
-        .module-box { background: #151515; border: 1px solid #444; padding: 20px; margin: 15px 0; border-radius: 4px; display: none; }
+        /* Главный контейнер файла дела */
+        #case-file { max-width: 1250px; width: 100%; background: #0d0d0d; border: 1px solid #333; min-height: 95vh; padding: 30px; box-shadow: 0 0 60px #000; box-sizing: border-box; position: relative; }
         
-        /* Сейф и Терминалы */
-        .terminal-input { background: #000; border: 1px solid var(--gold); color: var(--gold); padding: 10px; font-family: inherit; width: 200px; text-align: center; font-size: 1.2em; }
-        
-        /* Аэропорт: Сканер */
-        .scanner-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
-        .scan-target { background: #222; border: 1px solid #444; padding: 15px; text-align: center; cursor: pointer; font-size: 0.8em; }
-        .scan-target:hover { background: #333; }
-        .scan-target.alert { border-color: var(--red); color: var(--red); box-shadow: 0 0 10px var(--red); }
+        header { border-bottom: 2px solid var(--gold); padding-bottom: 20px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .main-layout { display: grid; grid-template-columns: 1fr 400px; gap: 35px; }
 
-        /* Кнопки */
+        /* Экран вывода информации */
+        #display { background: #000; border: 1px solid #222; padding: 25px; min-height: 450px; border-radius: 5px; margin-bottom: 25px; font-size: 1em; overflow-y: auto; border-left: 4px solid var(--gold); }
+        .highlight { color: var(--gold); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Модули взаимодействия */
+        .module-box { background: #151515; border: 1px solid #444; padding: 25px; margin: 15px 0; border-radius: 4px; display: none; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        
+        .terminal-input { background: #000; border: 1px solid var(--gold); color: var(--gold); padding: 12px; font-family: inherit; width: 250px; text-align: center; font-size: 1.3em; outline: none; margin-bottom: 15px; }
+        
+        /* Сетка сканера в Аэропорту */
+        .scanner-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
+        .scan-target { background: #1a1a1a; border: 1px solid #444; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; border-radius: 4px; }
+        .scan-target:hover { border-color: var(--cyan); background: #222; }
+        .scan-target.alert { border-color: var(--red); color: var(--red); box-shadow: 0 0 20px rgba(255,51,51,0.4); font-weight: bold; }
+
+        /* Кнопки навигации */
         .actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        button { background: #1a1a1a; color: var(--text); border: 1px solid #555; padding: 12px; cursor: pointer; transition: 0.3s; font-size: 0.7em; }
-        button:hover:not(:disabled) { border-color: var(--gold); background: #222; }
-        button:disabled { opacity: 0.1; }
+        button { background: #1a1a1a; color: var(--text); border: 1px solid #555; padding: 15px; cursor: pointer; transition: 0.3s; font-size: 0.75em; text-transform: uppercase; font-weight: bold; }
+        button:hover:not(:disabled) { border-color: var(--gold); background: #252525; color: #fff; }
+        button:disabled { opacity: 0.15; cursor: not-allowed; }
 
-        .side-panel { background: var(--panel); padding: 20px; border-left: 2px solid #222; }
-        .dossier-card { background: #111; padding: 12px; border: 1px solid #333; border-left: 5px solid var(--gold); margin-bottom: 15px; cursor: pointer; }
-        .clue-tag { background: #1a1a10; border: 1px solid #554a20; color: var(--gold); padding: 5px 8px; font-size: 0.7em; display: inline-block; margin: 3px; }
+        /* Боковая панель: Досье и Улики */
+        .side-panel { background: var(--panel); padding: 20px; border-left: 1px solid #333; border-radius: 0 5px 5px 0; }
+        .dossier-card { background: #1a1a1a; padding: 15px; border: 1px solid #333; border-left: 5px solid var(--gold); margin-bottom: 15px; cursor: pointer; transition: 0.2s; }
+        .dossier-card:hover { transform: translateX(8px); background: #222; }
+        .clue-tag { background: #1a1a13; border: 1px solid #443c24; color: var(--gold); padding: 6px 12px; font-size: 0.75em; display: inline-block; margin: 4px; border-radius: 2px; }
 
         .hidden { display: none !important; }
+        #timer { color: var(--red); font-size: 1.4em; font-weight: bold; padding: 5px 15px; border: 2px solid var(--red); }
     </style>
 </head>
 <body>
@@ -43,171 +49,204 @@
 <div id="case-file">
     <header>
         <div>
-            <h1 style="margin:0; font-size: 1.6em; letter-spacing: 4px; color: var(--gold);">STATE SECURITY | CASE 77-B</h1>
-            <small id="location-name">БИРЖА: СЕКТОР ХРАНЕНИЯ</small>
+            <h1 style="margin:0; font-size: 1.8em; letter-spacing: 5px; color: var(--gold);">CRIMINAL INVESTIGATION | FILE #77-B</h1>
+            <small id="location-name">СТАТУС: АКТИВНЫЙ ПОИСК УЛИК</small>
         </div>
-        <div id="timer" style="color:var(--red); font-size: 1.3em; font-weight: bold; border: 2px solid var(--red); padding: 5px 15px;">60:00</div>
+        <div id="timer">60:00</div>
     </header>
 
     <div class="main-layout">
         <div class="content-col">
             <div id="display">
-                <p class="highlight">[СИСТЕМА]: ОБНАРУЖЕНА КРАЖА ОБЪЕКТА "НЕПТУН".</p>
-                <p>Все выходы из здания заблокированы. Сейф Aegis v.4 закрыт после несанкционированного доступа. <br><br>
-                <b>ИНСТРУКЦИЯ:</b> Код доступа — это <b>сумма ID</b> двух офицеров, дежуривших на смене. Проверьте базу досье, чтобы авторизоваться.</p>
+                <p class="highlight">[СИСТЕМНОЕ УВЕДОМЛЕНИЕ]:</p>
+                <p>Добро пожаловать в систему ведения расследований. Сегодня, в 14:02, из главного хранилища Алмазной Биржи исчез уникальный камень "Слезы Нептуна". Сейф Aegis v.4 был вскрыт без физических повреждений.</p>
+                <p><b>ВАШИ ПЕРВЫЕ ДЕЙСТВИЯ:</b><br>
+                Система заблокирована. Код авторизации для доступа к сейфу основан на идентификаторах (ID) дежурных офицеров смены. Изучите <b>Досье Персонала</b> в правой панели. Найдите ID Алона и Дорона, сложите их и введите сумму в терминал сейфа.</p>
             </div>
 
             <div id="safe-ui" class="module-box" style="display:block; text-align: center;">
-                <p><b>ВВОД ID АВТОРИЗАЦИИ</b></p>
-                <input type="text" id="safe-code" class="terminal-input" placeholder="000">
-                <br><br>
-                <button onclick="checkSafe()" style="width: 220px;">ВХОД В СИСТЕМУ</button>
+                <p class="highlight">Авторизация Хранилища</p>
+                <input type="number" id="safe-input" class="terminal-input" placeholder="Введите ID">
+                <br>
+                <button onclick="unlockSafe()" style="width: 250px;">Подтвердить личность</button>
             </div>
 
             <div id="post-ui" class="module-box" style="text-align: center;">
-                <p style="color:var(--cyan)"><b>ПОЧТОВЫЙ ШЛЮЗ: ПОИСК ПО ТРАНЗАКЦИИ</b></p>
-                <p><small>Введите номер транзакции из чека, чтобы отследить посылку</small></p>
-                <input type="text" id="post-code" class="terminal-input" placeholder="TX-XXX">
-                <br><br>
-                <button onclick="checkPost()" style="width: 220px; border-color: var(--cyan);">ОТСЛЕДИТЬ</button>
+                <p class="highlight" style="color:var(--cyan)">Почтовый терминал "Global-Express"</p>
+                <p>Для отслеживания посылки введите номер транзакции (Transaction ID). Данный номер должен быть указан в финансовых документах подозреваемых.</p>
+                <input type="text" id="post-input" class="terminal-input" placeholder="TX-XXX" style="border-color:var(--cyan); color:var(--cyan);">
+                <br>
+                <button onclick="trackPackage()" style="width: 250px; border-color:var(--cyan);">Запросить статус</button>
             </div>
 
             <div id="airport-ui" class="module-box">
-                <p style="color:var(--red)"><b>ЗОНА ДОСМОТРА: РЕЙС 772</b></p>
-                <p>Подозреваемый: Марк Смит. Выберите зону для глубокого сканирования:</p>
+                <p class="highlight" style="color:var(--red)">Таможенный контроль: Рейс 772</p>
+                <p>Объект Марк Смит задержан для досмотра. Интуиция подсказывает, что алмазы при нем, но обычный металлодетектор молчит. Выберите зону для глубокого молекулярного сканирования:</p>
                 <div class="scanner-grid">
-                    <div class="scan-target" onclick="scanTarget('bag', this)">Сумка с ветошью</div>
-                    <div class="scan-target" onclick="scanTarget('shoes', this)">Обувь</div>
-                    <div class="scan-target" onclick="scanTarget('jacket', this)">Пуговицы куртки</div>
-                    <div class="scan-target" onclick="scanTarget('hat', this)">Головной убор</div>
+                    <div class="scan-target" onclick="scan('bag')">ДОРОЖНАЯ СУМКА<br><small>(Образцы ткани)</small></div>
+                    <div class="scan-target" onclick="scan('shoes')">ОБУВЬ КУРЬЕРА<br><small>(Подошва)</small></div>
+                    <div id="target-jacket" class="scan-target" onclick="scan('jacket')">ВЕРХНЯЯ ОДЕЖДА<br><small>(Пуговицы и швы)</small></div>
+                    <div class="scan-target" onclick="scan('pockets')">СОДЕРЖИМОЕ КАРМАНОВ<br><small>(Личные вещи)</small></div>
                 </div>
-                <div id="scan-res" class="highlight" style="margin-top:20px; text-align: center;"></div>
+                <div id="scan-feedback" style="margin-top:20px; padding:15px; background:#000; min-height:40px; border: 1px dashed #444;"></div>
             </div>
 
             <div class="actions">
-                <button id="nav-safe" onclick="showModule('safe-ui')">Сейф</button>
-                <button id="nav-lab" class="hidden" onclick="goTo('lab')">🔬 Лаборатория</button>
-                <button id="nav-cafe" class="hidden" onclick="goTo('cafe')">☕ Кафе</button>
-                <button id="nav-post" class="hidden" onclick="showModule('post-ui')">📦 Почта</button>
-                <button id="nav-airport" class="hidden" onclick="showModule('airport-ui')">✈️ Аэропорт</button>
+                <button id="btn-safe" onclick="showModule('safe-ui')">⚙️ Сейф</button>
+                <button id="btn-lab" class="hidden" onclick="visitLocation('lab')">🔬 Лаборатория</button>
+                <button id="btn-cafe" class="hidden" onclick="visitLocation('cafe')">☕ Кафе</button>
+                <button id="btn-post" class="hidden" onclick="showModule('post-ui')">📦 Почта</button>
+                <button id="btn-airport" class="hidden" style="border-color:var(--red)" onclick="showModule('airport-ui')">✈️ Аэропорт</button>
             </div>
         </div>
 
         <div class="side-panel">
-            <h3 style="margin:0; font-size:0.8em; color:var(--gold)">БАЗА ПЕРСОНАЛА:</h3>
+            <h3 style="margin-top:0; font-size:0.9em; color:var(--gold); letter-spacing: 2px;">АРХИВ ДОСЬЕ:</h3>
             <div id="suspects-list"></div>
             <hr style="border:0; border-top:1px solid #333; margin:20px 0;">
-            <h3 style="margin:0; font-size:0.8em; color:var(--gold)">НАЙДЕННЫЕ УЛИКИ:</h3>
+            <h3 style="margin:0; font-size:0.9em; color:var(--gold); letter-spacing: 2px;">ЖУРНАЛ УЛИК:</h3>
             <div id="clues-list"></div>
         </div>
     </div>
 </div>
 
 <script>
-    const suspects = {
-        alon: { name: "Алон (Охрана)", bio: "ID: <b>310</b>. Старший офицер. Жетон найден возле кофейного автомата." },
-        doron: { name: "Дорон (Охрана)", bio: "ID: <b>102</b>. Младший техник. Отвечал за калибровку лазеров в 14:00." },
-        eli: { name: "Эли Рафаэль", bio: "Механик. В его шкафчике найден театральный грим и пустая банка из-под талька." },
-        mark: { name: "Марк Смит", bio: "Курьер. Зарегистрирован на рейс в 15:45. Носит ветровку с 50-ю пуговицами." }
-    };
+    // База данных персонажей с расширенными описаниями
+    const personnel = [
+        { id: "alon", name: "Алон (Офицер Охраны)", pin: 310, bio: "Старший смены. ID жетона: 310. Имеет 15-летний стаж работы. В момент кражи находился у мониторов, но утверждает, что изображение замерло ровно на 120 секунд. Женат на сестре Эли Рафаэля." },
+        { id: "doron", name: "Дорон (Техник Охраны)", pin: 102, bio: "Младший сотрудник. ID жетона: 102. В 14:00 отправился в серверную для плановой перезагрузки системы охлаждения. Недавно приобрел дорогой спортивный автомобиль, происхождение средств не объяснено." },
+        { id: "eli", name: "Эли Рафаэль (Механик)", pin: null, bio: "Главный ювелирный техник. В прошлом — известный сценический фокусник по прозвищу 'Эли Великий'. Мастерски владеет техниками визуального обмана и работы с зеркалами." },
+        { id: "mark", name: "Марк Смит (Курьер)", pin: null, bio: "Внештатный курьер биржи. Известен своей пунктуальностью. Сегодня в 14:15 получил крупную посылку для доставки в аэропорт. Одет в стандартную серую ветровку." }
+    ];
 
-    let state = {
+    let gameState = {
         clues: new Set(),
         time: 3600,
-        safeOpen: false,
-        postTracked: false
+        safeUnlocked: false,
+        postAccess: false,
+        finalClueFound: false
     };
 
+    // Инициализация интерфейса
     function init() {
         const list = document.getElementById('suspects-list');
-        for (let key in suspects) {
-            const s = suspects[key];
-            const div = document.createElement('div');
-            div.className = "dossier-card";
-            div.innerHTML = `<strong>${s.name}</strong><br><small>Анализ данных...</small>`;
-            div.onclick = () => {
-                document.getElementById('display').innerHTML = `<h3>ДОСЬЕ: ${s.name}</h3><p>${s.bio}</p>`;
-                renderUI();
+        personnel.forEach(p => {
+            const card = document.createElement('div');
+            card.className = "dossier-card";
+            card.innerHTML = `<strong>${p.name}</strong><br><small>Нажмите для анализа...</small>`;
+            card.onclick = () => {
+                document.getElementById('display').innerHTML = `
+                    <h3 class="highlight">ЛИЧНОЕ ДЕЛО: ${p.name}</h3>
+                    <p style="font-size: 1.1em; line-height: 1.6;">${p.bio}</p>
+                    <hr border="0" style="border-top: 1px solid #333">
+                    <p><small>Информация получена из центрального архива МВД.</small></p>
+                `;
             };
-            list.appendChild(div);
-        }
+            list.appendChild(card);
+        });
+        startTimer();
     }
 
-    // ЛОГИКА СЕЙФА
-    function checkSafe() {
-        const val = document.getElementById('safe-code').value;
-        if(val === "412") { // 310 + 102
-            state.safeOpen = true;
-            state.clues.add("Сейф открыт (Код 412)");
+    // Взлом сейфа
+    function unlockSafe() {
+        const input = document.getElementById('safe-input').value;
+        if(input === "412") { // Сумма 310 + 102
+            gameState.safeUnlocked = true;
+            addClue("Сейф вскрыт (Код 412)");
             document.getElementById('display').innerHTML = `
-                <p class="highlight">[СЕЙФ ОТКРЫТ]:</p>
-                <p>Внутри пусто. На стенках — <b>белый налет</b> (тальк). <br>
-                На полу обнаружена визитка <b>Кафе "Биржа"</b> с пометкой на обороте: <i>"TX-882"</i>.</p>`;
-            document.getElementById('nav-cafe').classList.remove('hidden');
-            document.getElementById('nav-lab').classList.remove('hidden');
-            renderUI();
+                <h3 class="highlight">СЕЙФ Aegis v.4 ОТКРЫТ</h3>
+                <p>Массивные стальные двери бесшумно разошлись. Внутри — пустота. Камень "Слезы Нептуна" исчез.</p>
+                <p><b>ОСМОТР МЕСТА:</b> При детальном изучении дна сейфа вы обнаружили мельчайшую <b>белую пудру</b>. Она необычайно скользкая на ощупь. Также на крючке для ключей висит забытая <b>черная перчатка</b> с обрезанными пальцами.</p>
+                <p><i>Доступны новые локации: Лаборатория (для анализа пудры) и Кафе (где часто отдыхает персонал).</i></p>
+            `;
+            document.getElementById('safe-ui').classList.add('hidden');
+            document.getElementById('btn-lab').classList.remove('hidden');
+            document.getElementById('btn-cafe').classList.remove('hidden');
+            renderClues();
         } else {
-            alert("ОШИБКА АВТОРИЗАЦИИ. Проверьте ID дежурной смены.");
+            alert("ОШИБКА ДОСТУПА: Идентификатор не опознан базой безопасности.");
         }
     }
 
-    // ЛОГИКА ПОЧТЫ
-    function checkPost() {
-        const val = document.getElementById('post-code').value.toUpperCase();
-        if(val === "TX-882") {
-            state.postTracked = true;
-            state.clues.add("Посылка отслежена (TX-882)");
-            document.getElementById('display').innerHTML = `
-                <p class="highlight">[ДАННЫЕ ПОЧТЫ]:</p>
-                <p>Транзакция TX-882: 'Партия стальных пуговиц'. <br>
-                Отправитель: Эли Р. <br>
-                Получатель: Марк Смит (Терминал Аэропорта, Рейс 772).</p>`;
-            document.getElementById('nav-airport').classList.remove('hidden');
-            renderUI();
-        } else {
-            alert("Транзакция не найдена. Ищите код в Кафе.");
-        }
-    }
-
-    // ЛОГИКА АЭРОПОРТА
-    function scanTarget(type, el) {
-        const res = document.getElementById('scan-res');
-        if(type === 'jacket') {
-            el.classList.add('alert');
-            res.innerHTML = "ВНИМАНИЕ! ПОД СЛОЕМ СЕРОЙ КРАСКИ ОБНАРУЖЕНЫ АЛМАЗЫ! <br><br> <button onclick='finishGame()'>АРЕСТОВАТЬ ПРЕСТУПНИКА</button>";
-        } else {
-            el.style.opacity = "0.5";
-            res.innerHTML = "Объект чист. Проверьте что-то другое.";
-        }
-    }
-
-    function goTo(loc) {
+    // Локации
+    function visitLocation(loc) {
         const d = document.getElementById('display');
-        if(loc === 'cafe') {
-            d.innerHTML = `<h3>КАФЕ "БИРЖА"</h3><p>Официант вспомнил: "Да, Эли сидел тут. Он писал что-то на визитке и передал её курьеру. Номер транзакции был <b>TX-882</b>."</p>`;
-            document.getElementById('nav-post').classList.remove('hidden');
-        }
         if(loc === 'lab') {
-            d.innerHTML = `<h3>ЛАБОРАТОРИЯ</h3><p>Анализ налета из сейфа: Чистая магнезия (тальк). Его используют фокусники для манипуляций. Это почерк Эли Рафаэля.</p>`;
-            state.clues.add("Улика: Тальк фокусника");
+            d.innerHTML = `
+                <h3 class="highlight" style="color:var(--cyan)">ХИМИЧЕСКАЯ ЛАБОРАТОРИЯ</h3>
+                <p>Вы поместили образцы пудры в спектрометр. Спустя минуту прибор выдал результат: <b>Чистая магнезия</b>. Она используется гимнастами и... фокусниками, чтобы руки не потели при выполнении трюков.</p>
+                <p><b>АНАЛИЗ ПЕРЧАТКИ:</b> Внутри перчатки найден биологический след — частицы театрального грима и следы машинного масла, которое используется в <b>Мастерской Эли</b>.</p>
+            `;
+            addClue("Улика: Магнезия и грим");
         }
-        renderUI();
+        if(loc === 'cafe') {
+            d.innerHTML = `
+                <h3 class="highlight">КАФЕ "БИРЖА"</h3>
+                <p>В обеденное время здесь людно. Вы опрашиваете официанта. Тот вспоминает, что Эли Рафаэль сидел здесь за 10 минут до кражи с курьером Марком.</p>
+                <p><b>НАХОДКА:</b> Под столом, где они сидели, найден скомканный чек. На нем размашисто написано: <b style='color:var(--gold); font-size:1.4em;'>TX-882</b>. Похоже на номер почтовой транзакции.</p>
+                <p><i>Теперь вы можете проверить этот код в Почтовом терминале.</i></p>
+            `;
+            addClue("Транзакция: TX-882");
+            document.getElementById('btn-post').classList.remove('hidden');
+        }
+        renderClues();
+    }
+
+    // Почта
+    function trackPackage() {
+        const input = document.getElementById('post-input').value.toUpperCase();
+        if(input === "TX-882") {
+            gameState.postAccess = true;
+            document.getElementById('display').innerHTML = `
+                <h3 class="highlight" style="color:var(--cyan)">ПОИСК ПО БАЗЕ GLOBAL-EXPRESS</h3>
+                <p><b>ID ТРАНЗАКЦИИ:</b> TX-882<br><b>ОТПРАВИТЕЛЬ:</b> Эли Рафаэль (Частный сектор)<br><b>СОДЕРЖИМОЕ:</b> "Набор стальных пуговиц для реставрации одежды".<br><b>ВЕС:</b> 450 грамм.</p>
+                <p><b>СТАТУС:</b> Передано курьеру (Марк Смит). Местоположение: Зона вылета, Терминал А.</p>
+                <p><i>СРОЧНО: Перехватите курьера в Аэропорту, пока он не покинул страну!</i></p>
+            `;
+            addClue("Цель: Аэропорт, Рейс 772");
+            document.getElementById('btn-airport').classList.remove('hidden');
+            renderUI();
+        } else {
+            alert("ТРАНЗАКЦИЯ НЕ НАЙДЕНА. Проверьте код из Кафе.");
+        }
+    }
+
+    // Финальный сканер
+    function scan(type) {
+        const feedback = document.getElementById('scan-feedback');
+        if(type === 'jacket') {
+            document.getElementById('target-jacket').classList.add('alert');
+            feedback.innerHTML = `
+                <p style="color:var(--red); font-weight:bold;">ВНИМАНИЕ! ОБНАРУЖЕНА АНОМАЛИЯ ПЛОТНОСТИ!</p>
+                <p>Сканер обнаружил, что под слоем серой акриловой краски внутри стальных пуговиц находятся объекты с кристаллической решеткой алмаза. Эли Рафаэль закрасил "Слезы Нептуна" и пришил их на куртку ничего не подозревающего курьера!</p>
+                <button onclick="finishGame()" style="width:100%; border-color:var(--lime); color:var(--lime); margin-top:10px;">ПРОИЗВЕСТИ АРЕСТ</button>
+            `;
+        } else {
+            feedback.innerHTML = `<p style="color:#666;">Сканирование: ${type}... Объект чист. Никаких следов драгоценных камней.</p>`;
+        }
     }
 
     function finishGame() {
-        alert("БЛЕСТЯЩЕ! Вы раскрыли схему. Эли и Дорон (инсайдер) задержаны. Алмазы изъяты из пуговиц курьера Смита.");
+        alert("ПОЗДРАВЛЯЕМ! Вы блестяще раскрыли 'Дело #77-B'. Эли Рафаэль и его сообщник-офицер Дорон задержаны. Алмазы возвращены в хранилище.");
         location.reload();
     }
 
+    // Вспомогательные функции
     function showModule(id) {
         document.querySelectorAll('.module-box').forEach(m => m.style.display = 'none');
         document.getElementById(id).style.display = 'block';
+        if(id === 'airport-ui') document.getElementById('location-name').innerText = "ЛОКАЦИЯ: ТАМОЖНЯ АЭРОПОРТА";
     }
 
-    function renderUI() {
+    function addClue(text) {
+        gameState.clues.add(text);
+        renderClues();
+    }
+
+    function renderClues() {
         const list = document.getElementById('clues-list');
         list.innerHTML = "";
-        state.clues.forEach(c => {
+        gameState.clues.forEach(c => {
             const span = document.createElement('span');
             span.className = "clue-tag";
             span.innerText = c;
@@ -215,14 +254,18 @@
         });
     }
 
-    setInterval(() => {
-        state.time--;
-        const m = Math.floor(state.time/60);
-        const s = state.time%60;
-        document.getElementById('timer').innerText = `${m}:${s<10?'0'+s:s}`;
-    }, 1000);
+    function startTimer() {
+        setInterval(() => {
+            gameState.time--;
+            let mins = Math.floor(gameState.time / 60);
+            let secs = gameState.time % 60;
+            document.getElementById('timer').innerText = `${mins}:${secs < 10 ? '0' + secs : secs}`;
+            if(gameState.time <= 0) { alert("ВРЕМЯ ИСТЕКЛО! Преступник скрылся."); location.reload(); }
+        }, 1000);
+    }
 
-    init();
+    // Запуск игры
+    window.onload = init;
 </script>
 
 </body>
