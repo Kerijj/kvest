@@ -18,14 +18,21 @@
         }
         header { border-bottom: 2px solid var(--gold); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         
-        /* Верхняя часть: Досье */
-        .top-row { display: grid; grid-template-columns: 1fr 300px; gap: 15px; height: 180px; }
-        #display-box { background: #000; border: 1px solid #444; padding: 15px; border-left: 5px solid var(--gold); overflow-y: auto; font-size: 0.9em; }
+        /* Верхняя часть: Инструкция и Досье */
+        .top-row { display: grid; grid-template-columns: 1fr 300px; gap: 15px; height: 220px; }
+        
+        #display-box { 
+            background: #000; border: 1px solid #444; padding: 0; border-left: 5px solid var(--gold); 
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+        .instruction-header { background: #1a1a1a; padding: 10px; border-bottom: 1px solid #333; font-size: 0.85em; color: var(--gold); }
+        #archive-content { padding: 15px; overflow-y: auto; flex-grow: 1; font-size: 0.9em; }
+
         .suspect-list { background: var(--panel); border: 1px solid #333; padding: 10px; overflow-y: auto; }
         .suspect-card { background: #1a1a1a; padding: 8px; border: 1px solid #333; margin-bottom: 5px; cursor: pointer; font-size: 0.75em; }
         .suspect-card:hover { border-color: var(--gold); }
 
-        /* Центр: Активная зона (Сейф/Сервер) */
+        /* Центр: Активная зона */
         #action-zone { 
             flex-grow: 1; background: #050505; border: 1px solid #222; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
@@ -38,7 +45,7 @@
             font-size: 1.8em; cursor: pointer; background: #000; margin: 0 10px; user-select: none;
         }
 
-        /* Низ: Улики и Меню */
+        /* Низ: Навигация */
         .bottom-row { display: grid; grid-template-columns: 1fr 300px; gap: 15px; height: 100px; }
         .nav-menu { display: flex; gap: 8px; flex-wrap: wrap; align-content: flex-start; }
         #clues-box { background: #111; border: 1px solid #333; padding: 8px; font-size: 0.75em; color: var(--gold); overflow-y: auto; }
@@ -62,8 +69,12 @@
 
     <div class="top-row">
         <div id="display-box">
-            <b style="color:var(--gold)">[СИСТЕМА]:</b> Найдите код к сейфу в досье персонала.<br>
-            Код = [Жетон Алона(посл. цифра)] - [Стаж Ицхака(1-я цифра)] - [ID Марка(1-я цифра)].
+            <div class="instruction-header">
+                <b>ЦЕЛЬ:</b> Взломать сейф. Код = [Алон:посл. цифра] - [Ицхак:1-я стажа] - [Марк:1-я ID]
+            </div>
+            <div id="archive-content">
+                Нажмите на карточку подозреваемого справа, чтобы изучить его личное дело.
+            </div>
         </div>
         <div class="suspect-list" id="suspects"></div>
     </div>
@@ -82,7 +93,7 @@
         </div>
 
         <div id="mod-server" class="hidden" style="text-align:center">
-            <p style="color:var(--green)">ВВЕДИТЕ КЛЮЧ АДМИНИСТРАТОРА (Сумма жетонов Дани и Алона):</p>
+            <p style="color:var(--green)">ПАРОЛЬ АДМИНИСТРАТОРА (Дани + Алон):</p>
             <input type="text" id="pass" style="background:#000; border:1px solid var(--green); color:var(--green); padding:10px; text-align:center;"><br><br>
             <button onclick="checkServer()">ВЫПОЛНИТЬ ВЗЛОМ</button>
         </div>
@@ -110,11 +121,11 @@
 
 <script>
     const suspects = [
-        { name: "Алон (Охрана)", bio: "Жетон №48<b>3</b>. Альпинист." },
-        { name: "Ицхак (Ювелир)", bio: "Стаж: <b>1</b>5 лет." },
-        { name: "Марк (Курьер)", bio: "ID: <b>2</b>-00-9. Серый пуховик." },
-        { name: "Эли (Механик)", bio: "Химик. Заказывал пуговицы." },
-        { name: "Дани (IT)", bio: "Жетон №<b>909</b>. Удалил логи." }
+        { name: "Алон (Охрана)", bio: "Жетон №48<b>3</b>. Альпинист. Был у входа в 12:00." },
+        { name: "Ицхак (Ювелир)", bio: "Стаж: <b>1</b>5 лет. Мастер огранки. Был в подсобке." },
+        { name: "Марк (Курьер)", bio: "ID: <b>2</b>-00-9. Доставил ящик. Одет в серую куртку." },
+        { name: "Эли (Механик)", bio: "Химик. Заказывал серый лак и пуговицы." },
+        { name: "Дани (IT)", bio: "Жетон №<b>909</b>. Удалил логи системы." }
     ];
 
     let state = { dials: [0,0,0], clues: [], time: 2400 };
@@ -125,7 +136,9 @@
             const d = document.createElement('div');
             d.className = "suspect-card";
             d.innerHTML = `<strong>${s.name}</strong>`;
-            d.onclick = () => { document.getElementById('display-box').innerHTML = `<b>[ДОСЬЕ]:</b> ${s.bio}`; };
+            d.onclick = () => { 
+                document.getElementById('archive-content').innerHTML = `<b>АРХИВ: ${s.name}</b><br><br>${s.bio}`; 
+            };
             list.appendChild(d);
         });
         setInterval(() => {
@@ -139,30 +152,31 @@
 
     function checkSafe() {
         if (state.dials.join('') === '312') {
-            document.getElementById('display-box').innerHTML = "<b>[УСПЕХ]:</b> Сейф открыт. Внутри порошок. Идите в ЛАБОРАТОРИЮ.";
+            document.getElementById('archive-content').innerHTML = "<b>СИСТЕМА:</b> Сейф открыт! На дне найден белый порошок. Пора в ЛАБОРАТОРИЮ.";
             addClue("Белый налет"); unlock('lab'); go('lab');
-        } else alert("Неверно!");
+        } else alert("Неверный код!");
     }
 
     function lab(type) {
         if (type === 'chem') {
-            document.getElementById('display-box').innerHTML = "Это серый лак. Он маскирует алмазы под металл. Проверьте ПОЧТУ.";
+            document.getElementById('archive-content').innerHTML = "<b>ЛАБОРАТОРИЯ:</b> Это серый лак. Он маскирует алмазы под металл. Проверьте ПОЧТУ.";
             addClue("Серый лак"); unlock('post'); go('post');
-        } else alert("Ничего необычного.");
+        } else {
+            document.getElementById('archive-content').innerHTML = "<b>ЛАБОРАТОРИЯ:</b> Сканер показывает следы органики.";
+        }
     }
 
     function checkServer() {
         if (document.getElementById('pass').value === '1392') {
-            document.getElementById('display-box').innerHTML = "<b>[ВЗЛОМ]:</b> Лог восстановлен. Дани скрыл сообщника. В МАСТЕРСКУЮ!";
+            document.getElementById('archive-content').innerHTML = "<b>СЕРВЕРНАЯ:</b> Взлом удался! Лог восстановлен. Дани скрыл выход сообщника. В МАСТЕРСКУЮ!";
             addClue("Взлом логов"); unlock('workshop'); go('workshop');
-        } else alert("Отказ!");
+        } else alert("Пароль не принят!");
     }
 
     function go(loc) {
         document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active-loc'));
         document.getElementById(`btn-${loc}`).classList.add('active-loc');
         document.getElementById('status-line').innerText = `ЛОКАЦИЯ: ${loc.toUpperCase()}`;
-        
         document.querySelectorAll('#action-zone > div').forEach(d => d.classList.add('hidden'));
 
         if (loc === 'office') document.getElementById('mod-safe').classList.remove('hidden');
@@ -171,8 +185,8 @@
         else {
             document.getElementById('mod-text').classList.remove('hidden');
             let d = document.getElementById('loc-desc');
-            if (loc === 'post') { d.innerHTML = "<b>ПОЧТА:</b> Найдена посылка 'Пуговицы' от Эли. Идите в СЕРВЕРНУЮ."; unlock('server'); }
-            if (loc === 'workshop') { d.innerHTML = "<b>МАСТЕРСКАЯ:</b> Найден билет и план пуговиц-алмазов. В АЭРОПОРТ!"; unlock('airport'); }
+            if (loc === 'post') { d.innerHTML = "<b>ПОЧТА:</b> Найдена посылка 'Пуговицы' от Эли для Марка. <br><br>Странно... Идите в СЕРВЕРНУЮ."; unlock('server'); }
+            if (loc === 'workshop') { d.innerHTML = "<b>МАСТЕРСКАЯ:</b> Найден билет Эли и план 'Алмазы-пуговицы'. <br><br>Скорее в АЭРОПОРТ!"; unlock('airport'); }
             if (loc === 'airport') final();
         }
     }
@@ -181,10 +195,10 @@
     function addClue(t) { if(!state.clues.includes(t)){state.clues.push(t); document.getElementById('clues-list').innerHTML += `<div>> ${t}</div>`;}}
     
     function final() {
-        let n = prompt("КТО ВОР?");
-        let i = prompt("ГДЕ АЛМАЗЫ?");
-        if (n.toLowerCase().includes("эли") && i.toLowerCase().includes("пуговиц")) alert("ПОБЕДА!");
-        else alert("УПУЩЕН...");
+        let n = prompt("КТО ПРЕСТУПНИК?");
+        let i = prompt("ГДЕ СПРЯТАНЫ АЛМАЗЫ?");
+        if (n.toLowerCase().includes("эли") && i.toLowerCase().includes("пуговиц")) alert("ПОБЕДА! Дело закрыто.");
+        else alert("Вы ошиблись, преступник улетел.");
         location.reload();
     }
 
