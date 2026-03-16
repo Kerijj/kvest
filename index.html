@@ -2,195 +2,151 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>IDF CYBER COMMAND | CASE 8200-X</title>
+    <title>SIA - GLOBAL INVESTIGATION</title>
     <style>
-        :root { --blue: #005eb8; --neon: #00f2ff; --bg: #05080a; --gray: #4a5568; }
-        body { background: var(--bg); color: #a0aec0; font-family: 'Consolas', monospace; margin: 0; padding: 20px; }
+        :root { --blue: #005eb8; --neon: #00f2ff; --bg: #05080a; --danger: #ff4d4d; }
+        body { background: var(--bg); color: #a0aec0; font-family: 'Consolas', monospace; margin: 0; padding: 20px; overflow-x: hidden; }
         
-        #frame { max-width: 1400px; margin: 0 auto; border: 1px solid var(--blue); padding: 30px; background: #080c10; box-shadow: 0 0 50px rgba(0,242,255,0.1); }
-        header { border-bottom: 2px solid var(--blue); padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; }
+        #main-frame { max-width: 1400px; margin: 0 auto; border: 1px solid var(--blue); background: #080c10; box-shadow: 0 0 50px rgba(0,242,255,0.1); display: grid; grid-template-columns: 300px 1fr 350px; gap: 20px; padding: 20px; height: 90vh; }
         
-        .layout { display: grid; grid-template-columns: 1fr 450px; gap: 40px; }
-        #console-out { background: #000; border: 1px solid #1a202c; padding: 25px; min-height: 450px; color: var(--neon); line-height: 1.6; border-left: 5px solid var(--blue); }
-        
-        .module { display: none; margin-top: 25px; padding: 25px; background: #0d1117; border: 1px solid #1e293b; }
-        .input-term { background: #000; border: 1px solid var(--gray); color: var(--neon); padding: 12px; width: 100%; box-sizing: border-box; font-size: 1.1em; outline: none; margin: 10px 0; }
-        .input-term:focus { border-color: var(--neon); }
-        
-        .nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 30px; }
-        button { background: #1a202c; border: 1px solid #2d3748; color: #718096; padding: 15px; cursor: pointer; text-transform: uppercase; font-size: 0.75em; transition: 0.3s; }
-        button:hover { border-color: var(--neon); color: #fff; }
-        button.active { border-color: var(--neon); color: var(--neon); background: #1a202c; }
+        /* Стили карты */
+        .map-area { border: 1px solid #1e293b; position: relative; background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); overflow: hidden; display: flex; flex-direction: column; }
+        .location-node { padding: 15px; border: 1px solid #2d3748; margin: 10px; cursor: pointer; transition: 0.3s; background: rgba(13, 17, 23, 0.8); }
+        .location-node:hover { border-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
+        .location-node.locked { opacity: 0.4; cursor: not-allowed; border-color: #444; }
+        .location-node.active { border-left: 5px solid var(--neon); background: #1a202c; }
 
-        .dossier-card { border: 1px solid #1e293b; padding: 15px; margin-bottom: 12px; cursor: pointer; background: #0d1117; }
-        .dossier-card:hover { border-color: var(--blue); }
-        .tag { background: rgba(0, 242, 255, 0.1); color: var(--neon); padding: 3px 8px; font-size: 0.7em; margin-right: 5px; border: 1px solid rgba(0, 242, 255, 0.3); }
+        /* Консоль */
+        #terminal-core { background: #000; border: 1px solid #1a202c; padding: 20px; flex-grow: 1; color: var(--neon); font-size: 0.85em; overflow-y: auto; border-bottom: 5px solid var(--blue); }
         
-        .status-red { color: #ff4d4d; font-weight: bold; }
+        .input-block { background: #0d1117; padding: 20px; border-top: 1px solid #1e293b; }
+        .cmd-input { background: #000; border: 1px solid var(--blue); color: var(--neon); padding: 10px; width: 100%; box-sizing: border-box; outline: none; margin-bottom: 10px; }
+        
+        /* Досье */
+        .dossier-sidebar { border-left: 1px solid #1e293b; padding-left: 20px; overflow-y: auto; }
+        .person-card { border: 1px solid #1c2633; padding: 12px; margin-bottom: 10px; font-size: 0.8em; cursor: pointer; }
+        .person-card:hover { background: #131a26; }
+        
+        .tag { color: var(--neon); border: 1px solid var(--neon); padding: 2px 5px; font-size: 0.7em; margin-right: 5px; }
+        .header-ui { grid-column: 1 / 4; border-bottom: 2px solid var(--blue); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
 
-<div id="frame">
-    <header>
-        <div>
-            <h1 style="margin:0; font-size: 1.6em; letter-spacing: 4px; color: var(--blue);">CENTRAL UNIT 8200 | FORENSIC</h1>
-            <small>NODE: HERZLIYA_SERVER_7 | <span id="current-date">MARCH 16, 2026</span></small>
+<div id="main-frame">
+    <div class="header-ui">
+        <div><b style="color:var(--blue)">IDF CYBER UNIT</b> // CASE: NEGEV_DIAMOND // STATUS: SENSITIVE</div>
+        <div id="global-timer" style="color:var(--danger); font-size: 1.2em;">45:00</div>
+    </div>
+
+    <div class="map-area">
+        <h3 style="padding: 10px; font-size: 0.8em; color: var(--blue);">ГЕО-ЛОКАЦИИ (ISRAEL):</h3>
+        <div class="location-node active" id="loc-1" onclick="selectLoc(1)">
+            <b>01. ОФИС (ГЕРЦЛИЯ)</b><br><small>Сетевой шлюз и логи СКУД</small>
         </div>
-        <div id="timer" style="font-size: 1.5em; color: var(--neon);">59:59</div>
-    </header>
+        <div class="location-node locked" id="loc-2" onclick="selectLoc(2)">
+            <b>02. ПОРТ ХАЙФЫ</b><br><small>Анализ манифеста контейнеров</small>
+        </div>
+        <div class="location-node locked" id="loc-3" onclick="selectLoc(3)">
+            <b>03. АЭРОПОРТ БЕН-ГУРИОН</b><br><small>Перехват цели (GATE 32)</small>
+        </div>
+    </div>
 
-    <div class="layout">
-        <div class="work-area">
-            <div id="console-out">
-                <p>> Инициализация системы безопасности "Iron Vault"...</p>
-                <p>> ВНИМАНИЕ: Зафиксирована утечка пакетов на внешний DNS-сервер. <br>
-                > Инцидент произошел в блоке "Махон" во время обеденного перерыва. <br><br>
-                > ДЛЯ ДОСТУПА К ТРАФИКУ ВВЕДИТЕ АЛГОРИТМ: <br>
-                <b>(Год дембеля Ариэля * 2) - (Номер части Ноама)</b></p>
-            </div>
-
-            <div id="mod-auth" class="module" style="display:block;">
-                <p class="highlight">ВВЕДИТЕ РЕЗУЛЬТАТ ВЫЧИСЛЕНИЙ:</p>
-                <input type="number" id="auth-input" class="input-term" placeholder="COMPUTE_VAL">
-                <button onclick="checkAuth()">DECRYPT_GATEWAY</button>
-            </div>
-
-            <div id="mod-dns" class="module">
-                <p class="highlight">ПЕРЕХВАТ ПАКЕТОВ (DNS Tunneling):</p>
-                <p>Злоумышленник использовал HEX-код своего города в качестве субдомена. <br>
-                Найдите в досье HEX-значение (например, 0x...) и переведите его в десятичное число.</p>
-                <input type="number" id="dns-input" class="input-term" placeholder="DECIMAL_VAL">
-                <button onclick="checkDNS()">RESOLVE_DOMAIN</button>
-            </div>
-
-            <div id="mod-behave" class="module">
-                <p class="highlight">АНАЛИЗ ВРЕМЕННЫХ МЕТОК:</p>
-                <p>Кто из сотрудников находился за терминалом в 13:45? <br>
-                Учтите: <b>Йосси</b> ушел на молитву "Минха", <b>Ариэль</b> был на совещании. <br>
-                Введите ID сотрудника, у которого нет алиби.</p>
-                <input type="number" id="behave-input" class="input-term" placeholder="STAFF_ID">
-                <button onclick="checkBehave()">CONFIRM_IDENTITY</button>
-            </div>
-
-            <div class="nav">
-                <button onclick="showM('mod-auth')" class="active">Шлюз</button>
-                <button id="btn-dns" onclick="showM('mod-dns')" disabled>DNS-Лог</button>
-                <button id="btn-behave" onclick="showM('mod-behave')" disabled>Поведение</button>
-                <button id="btn-final" onclick="submitFinal()" style="color:var(--neon)" disabled>ЗАКРЫТЬ ДЕЛО</button>
+    <div style="display: flex; flex-direction: column;">
+        <div id="terminal-core">
+            <p>> СИСТЕМА ГОТОВА К РАБОТЕ.</p>
+            <p>> ТЕКУЩАЯ ЗАДАЧА: Локация "Герцлия". <br>
+            Инсайдер передал данные через терминал. Чтобы узнать номер порта, используйте формулу: <br>
+            <b>[ID Ариэля] - [Сумма цифр ID Йосси]</b>.</p>
+        </div>
+        
+        <div class="input-block">
+            <div id="task-ui">
+                <input type="text" id="main-input" class="cmd-input" placeholder="ВВЕДИТЕ КОД ДОСТУПА...">
+                <button onclick="processInput()" style="width:100%; background: var(--blue); color:white; border:none; padding:10px; cursor:pointer;">ВЫПОЛНИТЬ</button>
             </div>
         </div>
+    </div>
 
-        <div class="sidebar">
-            <h3 style="font-size:0.8em; color:var(--blue);">INTEL_BASE: STAFF</h3>
-            <div id="staff-list"></div>
-            <h3 style="font-size:0.8em; color:var(--blue); margin-top:30px;">СИСТЕМНЫЕ УЛИКИ</h3>
-            <div id="evidence-list"></div>
+    <div class="dossier-sidebar">
+        <h3 style="font-size: 0.8em; color: var(--blue);">БАЗА ДАННЫХ:</h3>
+        <div id="person-list"></div>
+        <div id="clues-list" style="margin-top:20px; border-top: 1px solid #1e293b; padding-top:10px;">
+            <h3 style="font-size: 0.8em; color: var(--neon);">УЛИКИ:</h3>
         </div>
     </div>
 </div>
 
 <script>
-    const staff = {
-        ariel: { 
-            name: "Ариэль (СБ)", 
-            bio: "ID: 770. Дембель: <b>2015</b>. Группа: СБ. <br><span class='tag'>Unit 8200</span> <span class='tag'>Ex-Officer</span>",
-            extra: "В 13:30 - 14:30 был в комнате совещаний с гендиректором."
-        },
-        noam: { 
-            name: "Ноам (Инженер)", 
-            bio: "ID: <b>338</b>. Часть ЦАХАЛ: 338. Проживает в Хайфе (HEX_CITY: <b>0x5F</b>). <br><span class='tag'>Full-Stack</span>",
-            extra: "Отказался идти на обед, сославшись на срочный дебаг."
-        },
-        yossi: { 
-            name: "Йосси (Техник)", 
-            bio: "ID: 412. Часть ЦАХАЛ: 101. Проживает в Ришоне. <br><span class='tag'>Support</span>",
-            extra: "Религиозен. С 13:30 до 14:00 находится в молельной комнате."
-        }
+    const db = {
+        ariel: { id: 770, name: "Ариэль", info: "СБ. ID: 770. Служба: 8200. <br><span class='tag'>Security</span>" },
+        noam: { id: 338, name: "Ноам", info: "Инженер. ID: 338. Часть: 338. Контейнер в порту: <b>#H-95</b>. <br><span class='tag'>R&D</span>" },
+        yossi: { id: 412, name: "Йосси", info: "Техник. ID: 412. Религиозен. <br><span class='tag'>Support</span>" }
     };
 
-    let state = { clues: new Set(), time: 3599 };
+    let currentStep = 1;
+    let clues = [];
 
     function init() {
-        const list = document.getElementById('staff-list');
-        for(let k in staff) {
-            const d = document.createElement('div');
-            d.className = 'dossier-card';
-            d.innerHTML = `<b>${staff[k].name}</b>`;
-            d.onclick = () => {
-                document.getElementById('console-out').innerHTML = `<h3>ДОСЬЕ: ${staff[k].name}</h3><p>${staff[k].bio}</p><hr style='border:0;border-top:1px solid #1e293b'><p>${staff[k].extra}</p>`;
+        const list = document.getElementById('person-list');
+        for(let k in db) {
+            const div = document.createElement('div');
+            div.className = 'person-card';
+            div.innerHTML = `<b>${db[k].name}</b> (ID: ${db[k].id})`;
+            div.onclick = () => {
+                document.getElementById('terminal-core').innerHTML += `<p style='color:#888'>> Запрос данных по ID ${db[k].id}... <br> ${db[k].info}</p>`;
+                document.getElementById('terminal-core').scrollTop = 9999;
             };
-            list.appendChild(d);
+            list.appendChild(div);
         }
-        startTimer();
     }
 
-    // ЛОГИКА 1: (2015 * 2) - 338 = 4030 - 338 = 3692.
-    function checkAuth() {
-        if(document.getElementById('auth-input').value === "3692") {
-            addE("Вход выполнен: Алгоритм ЦАХАЛ");
-            document.getElementById('console-out').innerHTML = `<h3>СИСТЕМА РАЗБЛОКИРОВАНА</h3><p>Доступ к логам трафика получен. <br>Обнаружен скрытый туннель: <b>[HEX_VALUE].quantum-leak.com</b></p>`;
-            document.getElementById('btn-dns').disabled = false;
-            showM('mod-dns');
-        } else { alert("ACCESS_DENIED: Ошибка алгоритма."); }
-    }
+    function processInput() {
+        const val = document.getElementById('main-input').value;
+        const log = document.getElementById('terminal-core');
 
-    // ЛОГИКА 2: HEX 0x5F = (5 * 16) + 15 = 80 + 15 = 95.
-    function checkDNS() {
-        if(document.getElementById('dns-input').value === "95") {
-            addE("DNS_RESOLVE: Хайфа (95)");
-            document.getElementById('console-out').innerHTML = `<h3>ДОМЕН РАСШИФРОВАН</h3><p>Субдомен 95 соответствует географическому идентификатору Хайфы. Пакеты уходили на сервер, зарегистрированный в этом секторе.</p>`;
-            document.getElementById('btn-behave').disabled = false;
-            showM('mod-behave');
-        } else { alert("ERROR: Домен не резолвится."); }
-    }
-
-    // ЛОГИКА 3: ID Ноама = 338. (Йосси на молитве, Ариэль на совещании).
-    function checkBehave() {
-        if(document.getElementById('behave-input').value === "338") {
-            addE("Фигурант: Ноам (ID 338)");
-            document.getElementById('console-out').innerHTML = `<h3>ЛИЧНОСТЬ ПОДТВЕРЖДЕНА</h3><p>Ноам — единственный, кто находился в блоке "Махон" в момент скачка трафика. Все косвенные улики указывают на него.</p>`;
-            document.getElementById('btn-final').disabled = false;
-        } else { alert("ОШИБКА: У этого сотрудника есть подтвержденное алиби."); }
-    }
-
-    function submitFinal() {
-        const confirm = prompt("ВВЕДИТЕ ФАМИЛИЮ ДЛЯ ОРДЕРА:");
-        if(confirm.toLowerCase().includes("ноам")) {
-            alert("UNIT 8200 УСПЕШНО ЗАВЕРШИЛ ОПЕРАЦИЮ. Ноам перехвачен по дороге в аэропорт Бен-Гурион.");
+        if(currentStep === 1) {
+            // Логика: 770 - (4+1+2) = 770 - 7 = 763
+            if(val === "763") {
+                log.innerHTML += `<p style='color:var(--neon)'>> ДОСТУП В ГЕРЦЛИИ ПОЛУЧЕН. <br> Обнаружена связь с портом Хайфы. Контейнер Ноама был обновлен дистанционно.</p>`;
+                unlockLoc(2);
+                currentStep = 2;
+                log.innerHTML += `<p>> НОВАЯ ЗАДАЧА: Локация "Порт Хайфы". <br> Введите номер контейнера из досье Ноама (формат: H95).</p>`;
+            } else { log.innerHTML += `<p style='color:var(--danger)'>> ОШИБКА АВТОРИЗАЦИИ.</p>`; }
+        } 
+        else if(currentStep === 2) {
+            if(val.toUpperCase() === "H95") {
+                log.innerHTML += `<p style='color:var(--neon)'>> КОНТЕЙНЕР H95 ВСКРЫТ. <br> Внутри обнаружен сервер. Логи показывают, что финальный сигнал синхронизации уйдет через 15 минут из Аэропорта.</p>`;
+                unlockLoc(3);
+                currentStep = 3;
+                log.innerHTML += `<p>> ФИНАЛ: Аэропорт Бен-Гурион. <br> Подозреваемый использует рейс в страну с кодом HEX 0x31. Какая это страна? (Подсказка: Код страны 49 в DEC).</p>`;
+            }
         }
-        location.reload();
+        else if(currentStep === 3) {
+            // 0x31 в DEC это 49 (Германия, например, но в нашем квесте пусть будет кодовое название)
+            // Давай сделаем проще: 0x31 = 49.
+            if(val === "49") {
+                alert("ЦЕЛЬ ЗАДЕРЖАНА У ГЕЙТА 32! ОПЕРАЦИЯ ЗАВЕРШЕНА.");
+                location.reload();
+            }
+        }
+        document.getElementById('main-input').value = "";
+        log.scrollTop = 9999;
     }
 
-    function addE(t) {
-        state.clues.add(t);
-        const l = document.getElementById('evidence-list');
-        l.innerHTML = "";
-        state.clues.forEach(c => {
-            const s = document.createElement('div');
-            s.className = 'tag';
-            s.style.display = 'block';
-            s.style.marginBottom = '5px';
-            s.innerText = `> ${c}`;
-            l.appendChild(s);
-        });
+    function unlockLoc(id) {
+        const el = document.getElementById(`loc-${id}`);
+        el.classList.remove('locked');
+        selectLoc(id);
     }
 
-    function showM(id) {
-        document.querySelectorAll('.module').forEach(m => m.style.display = 'none');
-        document.getElementById(id).style.display = 'block';
-    }
-
-    function startTimer() {
-        setInterval(() => {
-            state.time--;
-            let m = Math.floor(state.time/60), s = state.time%60;
-            document.getElementById('timer').innerText = `${m}:${s<10?'0'+s:s}`;
-        }, 1000);
+    function selectLoc(id) {
+        if(document.getElementById(`loc-${id}`).classList.contains('locked')) return;
+        document.querySelectorAll('.location-node').forEach(n => n.classList.remove('active'));
+        document.getElementById(`loc-${id}`).classList.add('active');
     }
 
     init();
 </script>
-
 </body>
 </html>
