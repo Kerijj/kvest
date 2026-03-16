@@ -2,40 +2,68 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>S.I.A. TERMINAL | CASE #77-B: THE TRAITOR</title>
+    <title>S.I.A. TERMINAL | CASE #77-B</title>
     <style>
         :root { 
             --gold: #c2b280; --bg: #0a0a0a; --panel: #111; 
             --text: #d1c7ac; --red: #ff3333; --cyan: #00cccc; --green: #00ff66; 
         }
-        body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; margin: 0; padding: 10px; display: flex; justify-content: center; height: 100vh; overflow: hidden; }
-        #case-file { max-width: 1100px; width: 100%; background: #0d0d0d; border: 1px solid #333; display: flex; flex-direction: column; gap: 10px; padding: 20px; box-shadow: 0 0 50px #000; position: relative; }
+        body { 
+            background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; 
+            margin: 0; padding: 10px; display: flex; justify-content: center; height: 100vh; overflow: hidden; 
+        }
+        #case-file { 
+            max-width: 1100px; width: 100%; background: #0d0d0d; border: 1px solid #333; 
+            display: flex; flex-direction: column; gap: 10px; padding: 20px; box-shadow: 0 0 50px #000; 
+        }
         header { border-bottom: 2px solid var(--gold); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* ВЕРХ: ИНФОРМАЦИЯ И ДОСЬЕ */
+        .top-row { display: grid; grid-template-columns: 1fr 320px; gap: 15px; height: 280px; }
         
-        .top-row { display: grid; grid-template-columns: 1fr 300px; gap: 15px; height: 260px; }
-        .info-container { display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
-        #task-box { background: #1a1a1a; border: 1px solid var(--gold); padding: 12px; font-size: 0.85em; border-left: 5px solid var(--gold); }
-        #archive-box { background: #000; border: 1px solid #444; padding: 15px; flex-grow: 1; overflow-y: auto; font-size: 0.88em; border-left: 5px solid var(--cyan); line-height: 1.4; }
+        .info-stack { display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+        #task-box { 
+            background: #1a1a1a; border-left: 5px solid var(--gold); padding: 15px; 
+            font-size: 0.85em; color: var(--gold); box-shadow: inset 0 0 10px #000;
+        }
+        #archive-box { 
+            background: #050505; border: 1px solid #222; border-left: 5px solid var(--cyan); 
+            padding: 15px; flex-grow: 1; overflow-y: auto; font-size: 0.9em; line-height: 1.5; 
+        }
 
         .suspect-list { background: var(--panel); border: 1px solid #333; padding: 10px; overflow-y: auto; }
-        .suspect-card { background: #1a1a1a; padding: 8px; border: 1px solid #333; margin-bottom: 5px; cursor: pointer; font-size: 0.75em; }
-        .suspect-card:hover { border-color: var(--gold); background: #222; }
+        .suspect-card { 
+            background: #1a1a1a; padding: 10px; border: 1px solid #333; margin-bottom: 8px; 
+            cursor: pointer; transition: 0.3s; font-size: 0.8em; 
+        }
+        .suspect-card:hover { border-color: var(--gold); background: #252525; }
 
-        #action-zone { flex-grow: 1; background: #050505; border: 1px solid #222; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-        .safe-dial { width: 65px; height: 65px; border: 3px double var(--gold); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.8em; cursor: pointer; background: #000; margin: 0 10px; }
+        /* ЦЕНТР: ИНТЕРАКТИВ */
+        #action-zone { 
+            flex-grow: 1; background: #000; border: 1px solid #222; 
+            display: flex; align-items: center; justify-content: center; border-radius: 4px;
+        }
+        .safe-dial { 
+            width: 75px; height: 75px; border: 3px double var(--gold); border-radius: 50%; 
+            display: inline-flex; align-items: center; justify-content: center; 
+            font-size: 2.2em; cursor: pointer; background: #0a0a0a; margin: 0 12px; user-select: none;
+            box-shadow: 0 0 15px rgba(194, 178, 128, 0.2);
+        }
 
-        .bottom-row { display: grid; grid-template-columns: 1fr 300px; gap: 15px; height: 110px; }
-        .nav-menu { display: flex; gap: 8px; flex-wrap: wrap; }
-        #clues-box { background: #111; border: 1px solid #333; padding: 8px; font-size: 0.75em; color: var(--gold); overflow-y: auto; }
+        /* НИЗ: КНОПКИ И УЛИКИ */
+        .bottom-row { display: grid; grid-template-columns: 1fr 320px; gap: 15px; height: 110px; }
+        .nav-menu { display: flex; gap: 8px; flex-wrap: wrap; align-content: flex-start; }
+        #clues-box { background: #0a0a0a; border: 1px solid #333; padding: 10px; font-size: 0.75em; color: var(--gold); overflow-y: auto; }
 
-        button { background: #1a1a1a; color: var(--text); border: 1px solid #444; padding: 8px 12px; cursor: pointer; font-size: 0.7em; text-transform: uppercase; }
-        button:hover:not(:disabled) { background: var(--gold); color: #000; }
-        button.active-loc { border-color: var(--cyan); background: #002222; }
+        button { 
+            background: #151515; color: var(--text); border: 1px solid #444; 
+            padding: 10px 15px; cursor: pointer; font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px;
+        }
+        button:hover:not(:disabled) { background: var(--gold); color: #000; border-color: var(--gold); }
+        button.active-loc { border-color: var(--cyan); background: #001a1a; color: var(--cyan); }
+        
         .hidden { display: none !important; }
-
-        /* Эффект тревоги */
-        .alarm { animation: flicker 0.2s infinite; }
-        @keyframes flicker { 0% { background: #0d0d0d; } 50% { background: #200; } 100% { background: #0d0d0d; } }
+        .system-msg { color: var(--green); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -43,22 +71,20 @@
 <div id="case-file">
     <header>
         <div>
-            <h2 style="margin:0;">S.I.A. TERMINAL | CASE #77-B</h2>
-            <small id="status-line" style="color:var(--cyan)">АНАЛИЗ: ОФИС</small>
+            <h2 style="margin:0; letter-spacing: 3px; color: var(--gold);">S.I.A. TERMINAL v5.0</h2>
+            <small id="status-line" style="color:var(--cyan)">ЛОКАЦИЯ: OFFICE</small>
         </div>
-        <div style="text-align:right">
-            <div id="timer" style="color:var(--red); font-size: 1.2em; font-weight: bold;">40:00</div>
-            <small id="suspicion" style="color:var(--gold)">ТРЕВОГА: 0%</small>
-        </div>
+        <div id="timer" style="color:var(--red); font-size: 1.6em; font-weight: bold;">40:00</div>
     </header>
 
     <div class="top-row">
-        <div class="info-container">
+        <div class="info-stack">
             <div id="task-box">
-                <b>ЦЕЛЬ:</b> Сейф. <span id="formula" style="color:var(--gold)">Код: [Алон:посл] - [Ицхак:1-я] - [Марк:1-я]</span>
+                <b style="color:#fff;">[ЦЕЛЬ]:</b> Взломать сейф.<br>
+                <span id="formula" style="opacity: 0.9;">Код: [Алон: посл. цифра] — [Ицхак: 1-я стажа] — [Марк: 1-я ID]</span>
             </div>
             <div id="archive-box">
-                <span style="opacity:0.5">Выберите файл...</span>
+                <span style="opacity:0.4;">Ожидание выбора файла... Нажмите на сотрудника справа.</span>
             </div>
         </div>
         <div class="suspect-list" id="suspects"></div>
@@ -69,22 +95,22 @@
             <div class="safe-dial" onclick="spin(0)" id="d0">0</div>
             <div class="safe-dial" onclick="spin(1)" id="d1">0</div>
             <div class="safe-dial" onclick="spin(2)" id="d2">0</div>
-            <p style="text-align:center"><button onclick="checkSafe()">ВЗЛОМАТЬ</button></p>
+            <p style="text-align:center;"><button onclick="checkSafe()" style="margin-top:25px; width:220px;">ОТКРЫТЬ СЕЙФ</button></p>
         </div>
 
         <div id="mod-lab" class="hidden">
-            <button onclick="lab('chem')">АНАЛИЗ ЛАКА</button>
-            <button onclick="lab('dna')">ДНК-ТЕСТ (ТРЕБУЕТСЯ ДОПУСК)</button>
+            <button onclick="lab('chem')">АНАЛИЗ ЛАКА (СЕЙФ)</button>
+            <button onclick="lab('micro')">АНАЛИЗ НИТИ (СЕЙФ)</button>
         </div>
 
         <div id="mod-server" class="hidden" style="text-align:center">
-            <p id="server-msg" style="color:var(--green)">СИСТЕМА ЗАБЛОКИРОВАНА ДАНИ</p>
-            <input type="password" id="pass" placeholder="КЛЮЧ" style="background:#000; border:1px solid var(--green); color:var(--green); padding:8px; text-align:center;"><br><br>
-            <button onclick="checkServer()">ОБХОД ЗАЩИТЫ (1392)</button>
+            <p style="color:var(--green); margin-bottom:15px;">АДМИН-КЛЮЧ: СУММА ЖЕТОНОВ ДАНИ (909) И АЛОНА (483)</p>
+            <input type="text" id="pass" maxlength="4" style="background:#000; border:1px solid var(--green); color:var(--green); padding:12px; text-align:center; width:120px; font-size: 1.5em;"><br><br>
+            <button onclick="checkServer()">ВОЙТИ В СИСТЕМУ</button>
         </div>
 
-        <div id="mod-text" class="hidden" style="text-align:center; padding: 20px;">
-            <p id="loc-desc"></p>
+        <div id="mod-text" class="hidden" style="text-align:center; padding: 25px;">
+            <p id="loc-desc" style="font-size: 1.2em; border: 1px dashed #333; padding: 20px;"></p>
         </div>
     </div>
 
@@ -95,9 +121,10 @@
             <button id="btn-post" class="hidden" onclick="go('post')">ПОЧТА</button>
             <button id="btn-server" class="hidden" onclick="go('server')">СЕРВЕРНАЯ</button>
             <button id="btn-workshop" class="hidden" onclick="go('workshop')">МАСТЕРСКАЯ</button>
-            <button id="btn-airport" class="hidden" style="color:var(--red)" onclick="go('airport')">АЭРОПОРТ</button>
+            <button id="btn-airport" class="hidden" style="color:var(--red);" onclick="go('airport')">АЭРОПОРТ</button>
         </div>
         <div id="clues-box">
+            <div style="opacity:0.3; font-size:0.7em;">ЖУРНАЛ УЛИК:</div>
             <div id="clues-list"></div>
         </div>
     </div>
@@ -105,15 +132,15 @@
 
 <script>
     const suspects = [
-        { name: "Алон (Охрана)", bio: "Жетон №48<b>3</b>. Видел Дани в серверной ночью. Алон нашел синюю нить у сейфа." },
-        { name: "Ицхак (Ювелир)", bio: "Стаж: <b>1</b>5 лет. Долги. Его отпечатки на банке с лаком, но он говорит, что банку украли." },
-        { name: "Марк (Курьер)", bio: "ID: <b>2</b>-00-9. Серая куртка. Привез посылку для Эли." },
-        { name: "Эли (Механик)", bio: "Синяя куртка. Спец по химии. Утверждает, что Дани просил его 'покрасить' детали." },
-        { name: "Сара (Жена)", bio: "Письмо Ицхаку: 'Сделай это, и долг будет закрыт'. Подпись подделана?" },
-        { name: "Дани (IT)", bio: "Жетон №<b>909</b>. Удалил записи. Единственный, кто мог подделать письма Сары." }
+        { name: "Алон (Охрана)", bio: "Жетон №48<b>3</b>. Альпинист. Видел кого-то в синем в коридоре." },
+        { name: "Ицхак (Ювелир)", bio: "Стаж: <b>1</b>5 лет. Должник. У него нашли банку серого лака (для защиты инструментов)." },
+        { name: "Марк (Курьер)", bio: "ID: <b>2</b>-00-9. Привез посылку. Был в серой нейлоновой ветровке." },
+        { name: "Эли (Механик)", bio: "Химик. Носит синий хлопковый комбинезон. Ремонтировал вытяжку над сейфом." },
+        { name: "Сара (Владелица)", bio: "Подозревает Ицхака из-за его старых долгов." },
+        { name: "Дани (IT)", bio: "Жетон №<b>909</b>. Удалил логи системы якобы из-за сбоя питания." }
     ];
 
-    let state = { dials: [0,0,0], clues: [], time: 2400, suspicion: 0, serverHacked: false };
+    let state = { dials: [0,0,0], clues: [], time: 2400 };
 
     function init() {
         const list = document.getElementById('suspects');
@@ -121,7 +148,9 @@
             const d = document.createElement('div');
             d.className = "suspect-card";
             d.innerHTML = `<strong>${s.name}</strong>`;
-            d.onclick = () => { document.getElementById('archive-box').innerHTML = `<b>ДАННЫЕ:</b> ${s.bio}`; };
+            d.onclick = () => { 
+                document.getElementById('archive-box').innerHTML = `<b>ДАННЫЕ:</b> ${s.bio}`; 
+            };
             list.appendChild(d);
         });
         setInterval(() => {
@@ -131,40 +160,42 @@
         }, 1000);
     }
 
-    function spin(i) { state.dials[i] = (state.dials[i]+1)%10; document.getElementById(`d${i}`).innerText = state.dials[i]; }
+    function spin(i) { 
+        state.dials[i] = (state.dials[i] + 1) % 10; 
+        document.getElementById(`d${i}`).innerText = state.dials[i]; 
+    }
 
     function checkSafe() {
         if (state.dials.join('') === '312') {
-            document.getElementById('archive-box').innerHTML = "<b>УЛИКА:</b> Сейф пуст. На дне — синяя нить. На мониторе Дани мигает надпись: 'НЕ ТУДА СМОТРИШЬ'.";
-            addClue("Синяя нить (Эли?)"); unlock('lab'); go('lab');
-        } else { increaseSuspicion(20); }
+            document.getElementById('archive-box').innerHTML = "<b class='system-msg'>[СЕЙФ ОТКРЫТ]:</b> Пусто! Но на защелке застряла <span style='color:var(--cyan)'>синяя нить</span>. На полу — серая пыль.";
+            document.getElementById('formula').innerText = "ЗАДАЧА: Проверить синюю нить в Лаборатории.";
+            addClue("Синяя нить из сейфа"); unlock('lab'); go('lab');
+        } else alert("НЕВЕРНЫЙ КОД");
     }
 
     function lab(type) {
-        if (type === 'dna') {
-            if (!state.serverHacked) alert("ДОСТУП ЗАБЛОКИРОВАН АДМИНИСТРАТОРОМ!");
-            else {
-                document.getElementById('archive-box').innerHTML = "<b>ДНК:</b> На нити кровь. Она совпадает с Эли, но в базе Дани изменил данные на Ицхака! Дани — соучастник.";
-                addClue("Дани подменил ДНК");
-            }
+        if (type === 'micro') {
+            document.getElementById('archive-box').innerHTML = "<b>ЛАБОРАТОРИЯ:</b> Нить — грубый хлопок. Такие у комбинезонов механиков (Эли). У курьеров (Марк) — синтетика.";
+            addClue("Нить от комбинезона Эли");
         } else {
-            document.getElementById('archive-box').innerHTML = "<b>ЛАК:</b> Это спецсостав. Такой заказывал Эли через Марка. Проверьте ПОЧТУ.";
+            document.getElementById('archive-box').innerHTML = "<b>ЛАБОРАТОРИЯ:</b> Это серый лак. Его заказали под видом 'краски для пуговиц'. Проверьте ПОЧТУ.";
             unlock('post');
         }
     }
 
     function checkServer() {
         if (document.getElementById('pass').value === '1392') {
-            state.serverHacked = true;
-            document.getElementById('archive-box').innerHTML = "<b>СИСТЕМА:</b> Вы получили рут-права. Видно, как Дани и Эли делят камни в Мастерской. Идите туда.";
-            addClue("Сговор Дани и Эли");
+            document.getElementById('archive-box').innerHTML = "<b>ВЗЛОМ:</b> Логи показывают: кто-то стер видеозаписи, используя терминал из МАСТЕРСКОЙ.";
+            document.getElementById('formula').innerText = "ЗАДАЧА: Найти алмазы в мастерской Эли.";
+            addClue("След из мастерской");
             unlock('workshop'); go('workshop');
-        } else { increaseSuspicion(30); }
+        } else alert("ОТКАЗ В ДОСТУПЕ");
     }
 
     function go(loc) {
         document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active-loc'));
         document.getElementById(`btn-${loc}`).classList.add('active-loc');
+        document.getElementById('status-line').innerText = `ЛОКАЦИЯ: ${loc.toUpperCase()}`;
         document.querySelectorAll('#action-zone > div').forEach(d => d.classList.add('hidden'));
 
         if (loc === 'office') document.getElementById('mod-safe').classList.remove('hidden');
@@ -173,27 +204,22 @@
         else {
             document.getElementById('mod-text').classList.remove('hidden');
             let d = document.getElementById('loc-desc');
-            if (loc === 'post') { d.innerHTML = "<b>ПОЧТА:</b> Заказ 'серого лака' оплачен со счета Дани! Теперь всё сходится. В СЕРВЕРНУЮ."; unlock('server'); }
-            if (loc === 'workshop') { d.innerHTML = "<b>МАСТЕРСКАЯ:</b> Пусто. Но на стене надпись: 'МЫ В АЭРОПОРТУ'. Поспешите!"; unlock('airport'); }
+            if (loc === 'post') { d.innerHTML = "<b>ПОЧТА:</b> Посылка 'Стальные пуговицы' на имя Эли. Слишком тяжелая. В СЕРВЕРНУЮ."; unlock('server'); }
+            if (loc === 'workshop') { d.innerHTML = "<b>МАСТЕРСКАЯ:</b> Пустые банки лака и пуговицы со следами алмазной пыли. Эли в АЭРОПОРТУ!"; unlock('airport'); }
             if (loc === 'airport') final();
         }
-    }
-
-    function increaseSuspicion(val) {
-        state.suspicion += val;
-        document.getElementById('suspicion').innerText = `ТРЕВОГА: ${state.suspicion}%`;
-        if (state.suspicion >= 100) { document.getElementById('case-file').classList.add('alarm'); alert("ДАНИ ОБНАРУЖИЛ ВАС И УНИЧТОЖИЛ ВСЕ УЛИКИ!"); location.reload(); }
     }
 
     function unlock(id) { document.getElementById(`btn-${id}`).classList.remove('hidden'); }
     function addClue(t) { if(!state.clues.includes(t)){state.clues.push(t); document.getElementById('clues-list').innerHTML += `<div>> ${t}</div>`;}}
     
     function final() {
-        let n = prompt("КТО ПРЕСТУПНИКИ? (Два имени)");
-        if (n.toLowerCase().includes("эли") && n.toLowerCase().includes("дани")) {
-            alert("БЛЕСТЯЩЕ! Вы раскрыли двойной заговор. Эли нес камни, а Дани подчищал следы.");
+        let n = prompt("КТО ПРЕСТУПНИК?");
+        let i = prompt("ГЛАВНАЯ УЛИКА (Нить / Лак / Долги):");
+        if (n.toLowerCase().includes("эли") && i.toLowerCase().includes("нить")) {
+            alert("ПОБЕДА! Эли пытался подставить Ицхака, подбросив ему лак, но нить от его собственного комбинезона его выдала!");
         } else {
-            alert("ПРОВАЛ. Вы схватили пешку, а кукловод Дани остался на свободе.");
+            alert("ОШИБКА! Преступник скрылся.");
         }
         location.reload();
     }
