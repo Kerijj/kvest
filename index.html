@@ -2,34 +2,34 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>S.I.A. TERMINAL | CASE #77-B: THE CRYSTAL MASK</title>
+    <title>S.I.A. TERMINAL | CASE #77-B: THE VENTILATION GHOST</title>
     <style>
         :root { 
             --gold: #c2b280; --bg: #0a0a0a; --panel: #111; 
             --text: #d1c7ac; --red: #ff3333; --cyan: #00cccc; --green: #00ff66; 
-            --coffee: #6f4e37;
+            --coffee: #6f4e37; --iron: #555;
         }
         body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; margin: 0; padding: 10px; display: flex; justify-content: center; height: 100vh; overflow: hidden; }
         #case-file { max-width: 1200px; width: 100%; background: #0d0d0d; border: 1px solid #333; display: flex; flex-direction: column; gap: 10px; padding: 20px; box-shadow: 0 0 50px #000; }
         
         header { border-bottom: 2px solid var(--gold); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 
-        .top-row { display: grid; grid-template-columns: 1fr 350px; gap: 15px; height: 300px; }
+        .top-row { display: grid; grid-template-columns: 1fr 350px; gap: 15px; height: 280px; }
         .info-stack { display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
         
-        #task-box { background: #1a1a1a; border-left: 5px solid var(--gold); padding: 15px; font-size: 0.85em; color: var(--gold); box-shadow: inset 0 0 15px #000; }
+        #task-box { background: #1a1a1a; border-left: 5px solid var(--gold); padding: 15px; font-size: 0.85em; color: var(--gold); }
         #archive-box { background: #050505; border: 1px solid #222; border-left: 5px solid var(--cyan); padding: 20px; flex-grow: 1; overflow-y: auto; font-size: 0.95em; line-height: 1.6; }
 
         .suspect-list { background: var(--panel); border: 1px solid #333; padding: 10px; overflow-y: auto; }
         .suspect-card { background: #1a1a1a; padding: 12px; border: 1px solid #333; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
         .suspect-card:hover { border-color: var(--gold); background: #222; transform: translateX(5px); }
-        .suspect-card strong { color: var(--gold); }
 
         #action-zone { flex-grow: 1; background: #000; border: 1px solid #222; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 20px; }
         
         /* Стили игровых элементов */
-        .safe-dial { width: 80px; height: 80px; border: 4px double var(--gold); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 2.5em; cursor: pointer; background: #0a0a0a; margin: 0 15px; transition: 0.3s; }
-        .safe-dial:active { transform: scale(0.9); border-color: #fff; }
+        .safe-dial { width: 80px; height: 80px; border: 4px double var(--gold); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 2.5em; cursor: pointer; background: #0a0a0a; margin: 0 15px; }
+
+        .vent-slider { width: 300px; margin: 20px; accent-color: var(--cyan); }
 
         .coffee-stat { display: inline-block; margin: 15px; text-align: center; }
         .coffee-stat input { width: 70px; background: #000; border: 2px solid var(--coffee); color: var(--gold); padding: 10px; text-align: center; font-size: 1.8em; outline: none; }
@@ -40,12 +40,12 @@
         #clues-box { background: #0a0a0a; border: 1px solid #333; padding: 10px; font-size: 0.8em; color: var(--cyan); overflow-y: auto; border-top: 2px solid var(--cyan); }
 
         button { background: #1a1a1a; color: var(--text); border: 1px solid #444; padding: 12px 20px; cursor: pointer; font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; }
-        button:hover { background: var(--gold); color: #000; }
-        button.active-loc { border-color: var(--cyan); background: #001a1a; color: var(--cyan); box-shadow: 0 0 10px rgba(0,204,204,0.2); }
+        button:hover:not(:disabled) { background: var(--gold); color: #000; }
+        button:disabled { opacity: 0.3; cursor: not-allowed; }
+        button.active-loc { border-color: var(--cyan); background: #001a1a; color: var(--cyan); }
         
         .hidden { display: none !important; }
         .highlight { color: var(--green); }
-        .red-alert { color: var(--red); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -53,22 +53,20 @@
 <div id="case-file">
     <header>
         <div>
-            <h1 style="margin:0; font-size: 1.5em; letter-spacing: 4px; color: var(--gold);">S.I.A. OPERATIONS | CASE #77-B</h1>
+            <h1 style="margin:0; font-size: 1.5em; letter-spacing: 4px; color: var(--gold);">S.I.A. TERMINAL | CASE #77-B</h1>
             <small id="status-line" style="color:var(--cyan)">ЛОКАЦИЯ: ЦЕНТРАЛЬНОЕ ХРАНИЛИЩЕ</small>
         </div>
-        <div id="timer" style="color:var(--red); font-size: 1.8em; font-weight: bold; text-shadow: 0 0 10px var(--red);">40:00</div>
+        <div id="timer" style="color:var(--red); font-size: 1.8em; font-weight: bold;">39:59</div>
     </header>
 
     <div class="top-row">
         <div class="info-stack">
             <div id="task-box">
-                <b>[ТЕКУЩАЯ ЗАДАЧА]:</b> Сейф серии "AEGIS" заблокирован. <br>
-                Соберите данные сотрудников, чтобы вычислить 3-значный код доступа.
+                <b>[ЦЕЛЬ]:</b> Взломайте сейф Aegis. Код зашифрован в досье сотрудников.
             </div>
             <div id="archive-box">
-                Добро пожаловать, агент. <br><br>
-                Вчера в 23:45 из хранилища исчез "Глаз пустыни" — уникальный голубой алмаз весом 120 карат. Камеры были отключены. Единственный след — странный химический запах в воздухе. <br><br>
-                <b>Начните с изучения досье подозреваемых.</b>
+                Вчера из этого хранилища исчез "Глаз пустыни". Камеры ничего не засняли. <br><br>
+                <b>Инструкция:</b> Кликайте по именам справа, чтобы сопоставить факты и найти 3 цифры кода.
             </div>
         </div>
         <div class="suspect-list" id="suspects"></div>
@@ -81,41 +79,46 @@
                 <div class="safe-dial" onclick="spin(1)" id="d1">0</div>
                 <div class="safe-dial" onclick="spin(2)" id="d2">0</div>
             </div>
-            <button onclick="checkSafe()">АКТИВИРОВАТЬ ДЕКОДЕР</button>
+            <button onclick="checkSafe()">ОТКРЫТЬ СЕЙФ</button>
+        </div>
+
+        <div id="mod-vent" class="view-mod hidden" style="text-align:center;">
+            <h2 style="color:var(--iron)">ТЕХНИЧЕСКИЙ ШЛЮЗ #04</h2>
+            <p>Вы нашли проход за сейфом. Чтобы пролезть, нужно выровнять давление лопастей вентилятора.</p>
+            <p>Установите мощность на <span class="highlight">75%</span></p>
+            <input type="range" id="ventRange" class="vent-slider" min="0" max="100" value="0" oninput="updateVent(this.value)">
+            <span id="ventVal" style="font-size: 1.5em;">0%</span>
+            <br><br>
+            <button id="ventBtn" onclick="checkVent()" disabled>РАЗБЛОКИРОВАТЬ РЕШЕТКУ</button>
         </div>
 
         <div id="mod-cafe" class="view-mod hidden">
-            <h2 style="color:var(--coffee); margin-top:0;">КОФЕЙНЫЙ ТЕРМИНАЛ ЭЛИ</h2>
+            <h2 style="color:var(--coffee); margin-top:0;">СЛУЖЕБНЫЙ ВХОД В КАФЕ</h2>
+            <p>Вы вылезли из вытяжки прямо в кофейне Эли. Здесь пахнет эспрессо и жженым лаком.</p>
             <div class="coffee-stat">ЭСПРЕССО<br><input type="number" id="c1" value="0"></div>
             <div class="coffee-stat">МОЛОКО<br><input type="number" id="c2" value="0"></div>
             <div class="coffee-stat">СИРОП<br><input type="number" id="c3" value="0"></div>
-            <p><button onclick="makeCoffee()" style="border-color: var(--coffee); color: var(--coffee);">ЗАПУСТИТЬ ЦИКЛ</button></p>
+            <p><button onclick="makeCoffee()" style="border-color: var(--coffee); color: var(--coffee);">АКТИВИРОВАТЬ ТАЙНИК</button></p>
         </div>
 
         <div id="mod-lab" class="view-mod hidden">
-            <p style="text-align:center; color: var(--green);">[АНАЛИЗАТОР МАТЕРИАЛОВ ОНЛАЙН]</p>
-            <div style="display: flex; gap: 20px;">
-                <button onclick="lab('micro')">МИКРОСКОПИЯ ТКАНИ</button>
-                <button onclick="lab('video')">ДЕШИФРОВКА ЛОГОВ</button>
-            </div>
+            <button onclick="lab('micro')">АНАЛИЗ ТКАНИ</button>
+            <button onclick="lab('video')">ВОССТАНОВЛЕНИЕ ДАННЫХ</button>
         </div>
-
-        <div id="mod-airport" class="view-mod hidden" style="text-align:center;">
-            <p class="red-alert" style="font-size: 1.4em;">ОБЪЕКТ ЗАМЕЧЕН У ТЕРМИНАЛА В</p>
-            <p>Он пытается пройти через сканер. Его одежда выглядит странно...</p>
-            <button onclick="final()" style="background: var(--red); color: white; padding: 15px 50px; font-size: 1.2em;">ПРОИЗВЕСТИ АРЕСТ</button>
+        <div id="mod-airport" class="view-mod hidden">
+            <button onclick="final()" style="background:var(--red); color:white; padding: 20px;">ПРОИЗВЕСТИ АРЕСТ</button>
         </div>
     </div>
 
     <div class="bottom-row">
         <div class="nav-menu">
-            <button id="btn-office" class="active-loc" onclick="go('office')">ХРАНИЛИЩЕ</button>
-            <button id="btn-cafe" class="hidden" onclick="go('cafe')">КАФЕ «У ЭЛИ»</button>
+            <button id="btn-office" class="active-loc" onclick="go('office')">ОФИС</button>
+            <button id="btn-vent" class="hidden" onclick="go('vent')">ВЕНТИЛЯЦИЯ</button>
+            <button id="btn-cafe" class="hidden" onclick="go('cafe')">КАФЕ</button>
             <button id="btn-lab" class="hidden" onclick="go('lab')">ЛАБОРАТОРИЯ</button>
             <button id="btn-airport" class="hidden" onclick="go('airport')">АЭРОПОРТ</button>
         </div>
         <div id="clues-box">
-            <div style="font-size: 0.7em; opacity: 0.6; margin-bottom: 5px;">ЖУРНАЛ УЛИК:</div>
             <div id="clues-list"></div>
         </div>
     </div>
@@ -123,26 +126,11 @@
 
 <script>
     const suspects = [
-        { 
-            name: "Алон (Охранник)", 
-            bio: "<b>Жетон №483.</b> <br>Бывший военный. В ночь кражи он дежурил, но утверждает, что 'внезапно уснул' после чашки кофе. Его жетон был найден возле системы вентиляции." 
-        },
-        { 
-            name: "Ицхак (Ювелир)", 
-            bio: "<b>Стаж: 15 лет.</b> <br>Лучший мастер в городе, но погряз в долгах из-за подпольных казино. В его мастерской нашли флакон серого матового лака. Говорит, что это для 'черновой работы'." 
-        },
-        { 
-            name: "Марк (Курьер)", 
-            bio: "<b>ID: 2-00-9.</b> <br>Привез посылку для Эли за час до кражи. Был одет в серую куртку из синтетики. Нервничал и постоянно смотрел на часы." 
-        },
-        { 
-            name: "Эли (Механик)", 
-            bio: "<b>Владелец кафе.</b> <br>Мастер по вентиляционным системам. У него есть доступ ко всем шахтам. Поговаривают, что он химик-самоучка. Его любимый напиток — 3 порции эспрессо, 1 молока и 2 сиропа." 
-        },
-        { 
-            name: "Дани (IT-спец)", 
-            bio: "<b>Жетон №909.</b> <br>Молодой гений. Именно он сообщил о 'сбое' камер. Дружен с Эли, часто засиживается у него в кафе после смены." 
-        }
+        { name: "Алон", bio: "Жетон 48<b>3</b>. Охранник. Заснул на посту после кофе." },
+        { name: "Ицхак", bio: "Ювелир. Работает <b>1</b>5 лет. В долгах. Пользуется серым лаком." },
+        { name: "Марк", bio: "Курьер. ID <b>2</b>-009. Привозит детали Эли." },
+        { name: "Эли", bio: "Владелец кафе. Рецепт: 3 эспрессо, 1 молоко, 2 сиропа. Мастер по вентиляции." },
+        { name: "Дани", bio: "IT-шник. Стёр видео за ту ночь." }
     ];
 
     let state = { dials: [0,0,0], clues: [], time: 2400 };
@@ -152,20 +140,11 @@
         suspects.forEach(s => {
             const d = document.createElement('div');
             d.className = "suspect-card";
-            d.innerHTML = `<strong>${s.name}</strong><br><small>Нажмите для данных</small>`;
-            d.onclick = () => {
-                document.getElementById('archive-box').innerHTML = s.bio;
-            };
+            d.innerHTML = `<strong>${s.name}</strong>`;
+            d.onclick = () => document.getElementById('archive-box').innerHTML = s.bio;
             list.appendChild(d);
         });
-
-        setInterval(() => {
-            if(state.time > 0) {
-                state.time--;
-                let m = Math.floor(state.time/60), s = state.time%60;
-                document.getElementById('timer').innerText = `${m}:${s<10?'0'+s:s}`;
-            }
-        }, 1000);
+        setInterval(() => { if(state.time > 0) state.time--; }, 1000);
     }
 
     function spin(i) { 
@@ -174,53 +153,50 @@
     }
 
     function checkSafe() {
-        // Код: 3 (Алон) - 1 (Ицхак) - 2 (Марк)
         if (state.dials.join('') === '312') {
-            document.getElementById('archive-box').innerHTML = "<span class='highlight'>[СИСТЕМА]: ДОСТУП РАЗРЕШЕН.</span> <br><br>Сейф открыт, но внутри лишь пустая коробка. Однако на острых краях дверцы вы заметили <b>клочок синей ткани</b>. Похоже на рабочий комбинезон. Также на полу рассыпана серая пыль, похожая на лак Ицхака.";
-            document.getElementById('task-box').innerHTML = "<b>[ЗАДАЧА]:</b> Исследуйте Кафе Эли. Похоже, преступник использовал вентиляцию кафе, чтобы попасть в офис.";
-            addClue("Синяя ткань");
-            document.getElementById('btn-cafe').classList.remove('hidden');
-            go('cafe');
-        } else alert("ОШИБКА: КОД НЕВЕРЕН");
+            document.getElementById('archive-box').innerHTML = "<span class='highlight'>[СЕЙФ ОТКРЫТ]</span><br>Внутри лежит ключ-карта от технического отсека и синяя нить. Похоже, вор ушел через вентиляцию прямо в стене!";
+            addClue("Ключ-карта от вентиляции");
+            document.getElementById('btn-vent').classList.remove('hidden');
+            go('vent');
+        } else alert("КОД НЕВЕРЕН");
+    }
+
+    function updateVent(v) {
+        document.getElementById('ventVal').innerText = v + "%";
+        document.getElementById('ventBtn').disabled = (v != 75);
+    }
+
+    function checkVent() {
+        document.getElementById('archive-box').innerHTML = "<span class='highlight'>[ШЛЮЗ ОТКРЫТ]</span><br>Вы ползете по узкой трубе. Всюду следы серой пыли (лак ювелира?). Путь ведет в Кафе Эли.";
+        addClue("Серый налет в трубах");
+        document.getElementById('btn-cafe').classList.remove('hidden');
+        go('cafe');
     }
 
     function makeCoffee() {
-        const c1 = document.getElementById('c1').value;
-        const c2 = document.getElementById('c2').value;
-        const c3 = document.getElementById('c3').value;
-        
-        if (c1 == '3' && c2 == '1' && c3 == '2') {
-            document.getElementById('archive-box').innerHTML = "<span class='highlight'>[МЕХАНИЗМ АКТИВИРОВАН]:</span> Кофемашина издала странный скрежет, и за задней панелью открылся тайник. Внутри вы нашли <b>жесткий диск</b> с надписью 'LOGS' и записку от Дани: 'Эли, видео стерто, улетай сегодня'.";
-            addClue("Секретный диск Дани");
+        const c = document.getElementById('c1').value + document.getElementById('c2').value + document.getElementById('c3').value;
+        if (c === '312') {
+            document.getElementById('archive-box').innerHTML = "<span class='highlight'>[СЕКРЕТ ОТКРЫТ]</span><br>В кофейном автомате спрятан диск с перепиской Эли и Дани. Они обсуждали, как скрыть алмаз в одежде.";
+            addClue("Диск с данными");
             document.getElementById('btn-lab').classList.remove('hidden');
-            document.getElementById('task-box').innerHTML = "<b>[ЗАДАЧА]:</b> Срочно в Лабораторию! Нужно восстановить данные и проверить ткань.";
             go('lab');
-        } else alert("Кофе невкусный. Ничего не произошло.");
+        } else alert("Ничего не произошло.");
     }
 
-    function lab(type) {
-        if (type === 'micro') {
-            document.getElementById('archive-box').innerHTML = "<b>[МИКРОСКОП]:</b> Волокна ткани — 100% хлопок, окрашенный в темно-синий цвет. Это ткань от профессиональных комбинезонов механиков. Куртки курьеров (как у Марка) обычно из нейлона.";
-            addClue("Ткань механика");
-            checkReady();
+    function lab(t) {
+        if(t === 'micro') {
+            document.getElementById('archive-box').innerHTML = "<b>АНАЛИЗ:</b> Синяя нить — это спецовка механика. Эли единственный, кто носит такую.";
+            addClue("Вина Эли доказана");
         } else {
-            document.getElementById('archive-box').innerHTML = "<b>[ДЕШИФРАТОР]:</b> Видео восстановлено! На кадрах видно человека в синем комбинезоне. Он покрывает алмаз серым лаком, чтобы тот выглядел как обычный камень, и вшивает его прямо в пуговицу своего костюма!";
-            addClue("Запись кражи");
-            checkReady();
+            document.getElementById('archive-box').innerHTML = "<b>ВИДЕО:</b> Видно, как Эли покрывает алмаз серым лаком Ицхака и вшивает в пуговицу.";
+            addClue("Алмаз в пуговице");
         }
-    }
-
-    function checkReady() {
-        if (state.clues.length >= 4) {
-            document.getElementById('btn-airport').classList.remove('hidden');
-            document.getElementById('task-box').innerHTML = "<span class='red-alert'>[СРОЧНО]: ПРЕСТУПНИК В АЭРОПОРТУ. ОН ПЫТАЕТСЯ ВЫВЕЗТИ АЛМАЗ В ПУГОВИЦАХ!</span>";
-        }
+        if(state.clues.length >= 5) document.getElementById('btn-airport').classList.remove('hidden');
     }
 
     function go(loc) {
         document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active-loc'));
         document.getElementById('btn-' + loc).classList.add('active-loc');
-        document.getElementById('status-line').innerText = `ЛОКАЦИЯ: ${loc.toUpperCase()}`;
         document.querySelectorAll('.view-mod').forEach(m => m.classList.add('hidden'));
         document.getElementById('mod-' + loc).classList.remove('hidden');
     }
@@ -231,18 +207,14 @@
             document.getElementById('clues-list').innerHTML += `<div>• ${t}</div>`;
         }
     }
-    
+
     function final() {
-        let name = prompt("ИМЯ ПРЕСТУПНИКА:");
-        let way = prompt("ГДЕ СПРЯТАН АЛМАЗ? (Одно слово):");
-        
-        if (name && name.toLowerCase().includes("эли") && way && way.toLowerCase().includes("пуговиц")) {
-            alert("ПОБЕДА! Вы схватили Эли прямо перед посадкой. Полиция распорола его синий комбинезон и нашла алмаз, покрытый серым лаком, внутри одной из пуговиц. Эли и Дани арестованы. Вы — легенда S.I.A.!");
+        let name = prompt("КТО ВОР?");
+        let place = prompt("ГДЕ АЛМАЗ?");
+        if(name.toLowerCase().includes("эли") && place.toLowerCase().includes("пуговиц")) {
+            alert("ПОБЕДА! Эли пойман в аэропорту. Алмаз был замаскирован под серую пуговицу!");
             location.reload();
-        } else {
-            alert("ПРОВАЛ! Пока вы сомневались, Эли сел в самолет. Алмаз потерян навсегда. Вас увольняют.");
-            location.reload();
-        }
+        } else alert("Он улетел...");
     }
 
     init();
