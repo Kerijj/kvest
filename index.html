@@ -2,151 +2,140 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>SIA - GLOBAL INVESTIGATION</title>
+    <title>IAA ARCHAEOLOGICAL FORENSIC</title>
     <style>
-        :root { --blue: #005eb8; --neon: #00f2ff; --bg: #05080a; --danger: #ff4d4d; }
-        body { background: var(--bg); color: #a0aec0; font-family: 'Consolas', monospace; margin: 0; padding: 20px; overflow-x: hidden; }
+        :root { --sand: #e2d1b3; --clay: #a67d5d; --ink: #2b1d0e; --gold: #ffd700; }
+        body { background: #1a1a1a; color: var(--sand); font-family: 'Georgia', serif; margin: 0; padding: 20px; }
         
-        #main-frame { max-width: 1400px; margin: 0 auto; border: 1px solid var(--blue); background: #080c10; box-shadow: 0 0 50px rgba(0,242,255,0.1); display: grid; grid-template-columns: 300px 1fr 350px; gap: 20px; padding: 20px; height: 90vh; }
+        #vault-frame { max-width: 1400px; margin: 0 auto; border: 3px solid var(--clay); background: #26211c; padding: 30px; box-shadow: inset 0 0 50px #000; }
+        header { border-bottom: 2px double var(--clay); padding-bottom: 20px; margin-bottom: 30px; text-align: center; }
         
-        /* Стили карты */
-        .map-area { border: 1px solid #1e293b; position: relative; background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); overflow: hidden; display: flex; flex-direction: column; }
-        .location-node { padding: 15px; border: 1px solid #2d3748; margin: 10px; cursor: pointer; transition: 0.3s; background: rgba(13, 17, 23, 0.8); }
-        .location-node:hover { border-color: var(--neon); box-shadow: 0 0 10px var(--neon); }
-        .location-node.locked { opacity: 0.4; cursor: not-allowed; border-color: #444; }
-        .location-node.active { border-left: 5px solid var(--neon); background: #1a202c; }
-
-        /* Консоль */
-        #terminal-core { background: #000; border: 1px solid #1a202c; padding: 20px; flex-grow: 1; color: var(--neon); font-size: 0.85em; overflow-y: auto; border-bottom: 5px solid var(--blue); }
+        .main-layout { display: grid; grid-template-columns: 350px 1fr 380px; gap: 25px; height: 85vh; }
         
-        .input-block { background: #0d1117; padding: 20px; border-top: 1px solid #1e293b; }
-        .cmd-input { background: #000; border: 1px solid var(--blue); color: var(--neon); padding: 10px; width: 100%; box-sizing: border-box; outline: none; margin-bottom: 10px; }
+        /* Стили консоли */
+        #journal { background: #fdf6e3; color: var(--ink); padding: 25px; border-radius: 5px; box-shadow: 5px 5px 15px #000; overflow-y: auto; font-style: italic; line-height: 1.6; }
         
         /* Досье */
-        .dossier-sidebar { border-left: 1px solid #1e293b; padding-left: 20px; overflow-y: auto; }
-        .person-card { border: 1px solid #1c2633; padding: 12px; margin-bottom: 10px; font-size: 0.8em; cursor: pointer; }
-        .person-card:hover { background: #131a26; }
-        
-        .tag { color: var(--neon); border: 1px solid var(--neon); padding: 2px 5px; font-size: 0.7em; margin-right: 5px; }
-        .header-ui { grid-column: 1 / 4; border-bottom: 2px solid var(--blue); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .card { background: #3d352d; border: 1px solid var(--clay); padding: 15px; margin-bottom: 15px; font-size: 0.85em; }
+        .card b { color: var(--gold); text-transform: uppercase; }
+        .tag { color: #8ecae6; font-size: 0.8em; border: 1px solid #8ecae6; padding: 2px 4px; margin-right: 5px; }
+
+        /* Инструменты */
+        .tool-box { margin-top: 20px; background: #1a1a1a; padding: 20px; border: 1px solid var(--clay); }
+        input { background: #000; border: 1px solid var(--clay); color: var(--gold); padding: 12px; width: 100%; box-sizing: border-box; font-family: 'Courier New'; margin-bottom: 10px; }
+        button { background: var(--clay); color: white; border: none; padding: 12px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+        button:hover { background: var(--gold); color: #000; }
+
+        .chemical-report { font-size: 0.75em; color: #9d9d9d; margin-top: 10px; border: 1px dashed #555; padding: 10px; }
     </style>
 </head>
 <body>
 
-<div id="main-frame">
-    <div class="header-ui">
-        <div><b style="color:var(--blue)">IDF CYBER UNIT</b> // CASE: NEGEV_DIAMOND // STATUS: SENSITIVE</div>
-        <div id="global-timer" style="color:var(--danger); font-size: 1.2em;">45:00</div>
-    </div>
+<div id="vault-frame">
+    <header>
+        <h1 style="margin:0; letter-spacing: 5px;">IAA: ANTIQUITIES DATABASE</h1>
+        <small>ИЕРУСАЛИМ • ОТДЕЛ ПО БОРЬБЕ С ХИЩЕНИЕМ НАСЛЕДИЯ</small>
+    </header>
 
-    <div class="map-area">
-        <h3 style="padding: 10px; font-size: 0.8em; color: var(--blue);">ГЕО-ЛОКАЦИИ (ISRAEL):</h3>
-        <div class="location-node active" id="loc-1" onclick="selectLoc(1)">
-            <b>01. ОФИС (ГЕРЦЛИЯ)</b><br><small>Сетевой шлюз и логи СКУД</small>
+    <div class="main-layout">
+        <div class="panel">
+            <h3 style="color:var(--gold)">ФИГУРАНТЫ ДЕЛА</h3>
+            <div id="suspects-list"></div>
         </div>
-        <div class="location-node locked" id="loc-2" onclick="selectLoc(2)">
-            <b>02. ПОРТ ХАЙФЫ</b><br><small>Анализ манифеста контейнеров</small>
-        </div>
-        <div class="location-node locked" id="loc-3" onclick="selectLoc(3)">
-            <b>03. АЭРОПОРТ БЕН-ГУРИОН</b><br><small>Перехват цели (GATE 32)</small>
-        </div>
-    </div>
 
-    <div style="display: flex; flex-direction: column;">
-        <div id="terminal-core">
-            <p>> СИСТЕМА ГОТОВА К РАБОТЕ.</p>
-            <p>> ТЕКУЩАЯ ЗАДАЧА: Локация "Герцлия". <br>
-            Инсайдер передал данные через терминал. Чтобы узнать номер порта, используйте формулу: <br>
-            <b>[ID Ариэля] - [Сумма цифр ID Йосси]</b>.</p>
-        </div>
-        
-        <div class="input-block">
-            <div id="task-ui">
-                <input type="text" id="main-input" class="cmd-input" placeholder="ВВЕДИТЕ КОД ДОСТУПА...">
-                <button onclick="processInput()" style="width:100%; background: var(--blue); color:white; border:none; padding:10px; cursor:pointer;">ВЫПОЛНИТЬ</button>
+        <div style="display: flex; flex-direction: column;">
+            <div id="journal">
+                <p><b>ЗАПИСЬ #882:</b> Пропавшая печать была найдена в секторе <b>G-12</b> (Город Давида). <br>
+                Инвентарный номер: <b>IAA-744</b>. <br>
+                Состав: золото 98% + следы меди. Вес: <b>12 сиклей</b> (1 сикль = 11.4 г).</p>
+                <hr>
+                <p>> <b>ЗАДАЧА 1:</b> Вычислите общий вес артефакта в граммах. <br>
+                Введите число, чтобы открыть отчет химического анализа патины.</p>
+            </div>
+            
+            <div class="tool-box">
+                <input type="text" id="main-input" placeholder="ВВЕДИТЕ ЗНАЧЕНИЕ...">
+                <button onclick="checkData()">ПОДТВЕРДИТЬ ПОИСК</button>
             </div>
         </div>
-    </div>
 
-    <div class="dossier-sidebar">
-        <h3 style="font-size: 0.8em; color: var(--blue);">БАЗА ДАННЫХ:</h3>
-        <div id="person-list"></div>
-        <div id="clues-list" style="margin-top:20px; border-top: 1px solid #1e293b; padding-top:10px;">
-            <h3 style="font-size: 0.8em; color: var(--neon);">УЛИКИ:</h3>
+        <div class="panel">
+            <h3 style="color:var(--gold)">АРТЕФАКТЫ И УЛИКИ</h3>
+            <div id="evidence-box">
+                <div class="card" style="border-color:var(--gold)">
+                    <b>ПЕРЕХВАТ СООБЩЕНИЯ:</b><br>
+                    "Встретимся в туннеле Езекии. Ключ к гермозатвору — это стих из Книги Царств, где упоминается вес золота, привозимого Соломону за год."
+                    <div class="chemical-report">ПОДСКАЗКА: 3-я Царств 10:14.</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const db = {
-        ariel: { id: 770, name: "Ариэль", info: "СБ. ID: 770. Служба: 8200. <br><span class='tag'>Security</span>" },
-        noam: { id: 338, name: "Ноам", info: "Инженер. ID: 338. Часть: 338. Контейнер в порту: <b>#H-95</b>. <br><span class='tag'>R&D</span>" },
-        yossi: { id: 412, name: "Йосси", info: "Техник. ID: 412. Религиозен. <br><span class='tag'>Support</span>" }
+    const suspects = {
+        bergman: { 
+            name: "Проф. Бергман", 
+            role: "Археолог", 
+            bio: "ID: 405. Проводил раскопки в секторе G. Погряз в судебных тяжбах. Родился в <b>1958</b> году." 
+        },
+        abu_said: { 
+            name: "Абу Саид", 
+            role: "Рабочий", 
+            bio: "Нашел клад. Знает туннели как свои пять пальцев. ID: 112. Скрылся в Старом Городе." 
+        },
+        levy: { 
+            name: "Инспектор Леви", 
+            role: "Охрана IAA", 
+            bio: "ID: 909. Имел доступ к ключам в ночь пропажи. Последняя активность: <b>02:15</b> у выхода к Стене Плача." 
+        }
     };
 
-    let currentStep = 1;
-    let clues = [];
+    let stage = 1;
 
     function init() {
-        const list = document.getElementById('person-list');
-        for(let k in db) {
+        const container = document.getElementById('suspects-list');
+        for(let key in suspects) {
             const div = document.createElement('div');
-            div.className = 'person-card';
-            div.innerHTML = `<b>${db[k].name}</b> (ID: ${db[k].id})`;
-            div.onclick = () => {
-                document.getElementById('terminal-core').innerHTML += `<p style='color:#888'>> Запрос данных по ID ${db[k].id}... <br> ${db[k].info}</p>`;
-                document.getElementById('terminal-core').scrollTop = 9999;
-            };
-            list.appendChild(div);
+            div.className = 'card';
+            div.innerHTML = `<span class='tag'>${suspects[key].role}</span><br><b>${suspects[key].name}</b><br><small>${suspects[key].bio}</small>`;
+            container.appendChild(div);
         }
     }
 
-    function processInput() {
+    function checkData() {
         const val = document.getElementById('main-input').value;
-        const log = document.getElementById('terminal-core');
+        const journal = document.getElementById('journal');
 
-        if(currentStep === 1) {
-            // Логика: 770 - (4+1+2) = 770 - 7 = 763
-            if(val === "763") {
-                log.innerHTML += `<p style='color:var(--neon)'>> ДОСТУП В ГЕРЦЛИИ ПОЛУЧЕН. <br> Обнаружена связь с портом Хайфы. Контейнер Ноама был обновлен дистанционно.</p>`;
-                unlockLoc(2);
-                currentStep = 2;
-                log.innerHTML += `<p>> НОВАЯ ЗАДАЧА: Локация "Порт Хайфы". <br> Введите номер контейнера из досье Ноама (формат: H95).</p>`;
-            } else { log.innerHTML += `<p style='color:var(--danger)'>> ОШИБКА АВТОРИЗАЦИИ.</p>`; }
-        } 
-        else if(currentStep === 2) {
-            if(val.toUpperCase() === "H95") {
-                log.innerHTML += `<p style='color:var(--neon)'>> КОНТЕЙНЕР H95 ВСКРЫТ. <br> Внутри обнаружен сервер. Логи показывают, что финальный сигнал синхронизации уйдет через 15 минут из Аэропорта.</p>`;
-                unlockLoc(3);
-                currentStep = 3;
-                log.innerHTML += `<p>> ФИНАЛ: Аэропорт Бен-Гурион. <br> Подозреваемый использует рейс в страну с кодом HEX 0x31. Какая это страна? (Подсказка: Код страны 49 в DEC).</p>`;
-            }
+        if(stage === 1) {
+            // Логика: 12 сиклей * 11.4 г = 136.8.
+            if(val === "136.8") {
+                journal.innerHTML += `<p style='color:var(--clay)'>> АНАЛИЗ ПРИНЯТ. <br> Химический отчет: На месте кражи найдена пыль известняка, характерная только для <b>туннелей под Мусульманским кварталом</b>.</p>`;
+                journal.innerHTML += `<p>> <b>ЗАДАЧА 2:</b> Введите секретный код из Книги Царств (3 Царств 10:14) — сколько талантов золота получал Соломон?</p>`;
+                stage = 2;
+            } else { alert("ОШИБКА ВЕСА: Весы не сбалансированы."); }
         }
-        else if(currentStep === 3) {
-            // 0x31 в DEC это 49 (Германия, например, но в нашем квесте пусть будет кодовое название)
-            // Давай сделаем проще: 0x31 = 49.
-            if(val === "49") {
-                alert("ЦЕЛЬ ЗАДЕРЖАНА У ГЕЙТА 32! ОПЕРАЦИЯ ЗАВЕРШЕНА.");
+        else if(stage === 2) {
+            // В 3-й Книге Царств 10:14 указано 666 талантов золота.
+            if(val === "666") {
+                journal.innerHTML += `<p style='color:var(--clay)'>> ШИФР ВЕРЕН. <br> Вы получили доступ к камерам. <br> На видео в 02:15 инспектор Леви передает сверток человеку, чей год рождения совпадает с инвентарным номером IAA (IAA-744 -> 19XX).</p>`;
+                journal.innerHTML += `<p>> <b>ЗАДАЧА 3:</b> Вычислите год рождения сообщника. Это (2026 - (744 / 12)).</p>`;
+                stage = 3;
+            } else { alert("ТЕКСТ НЕВЕРЕН: Писание говорит об ином."); }
+        }
+        else if(stage === 3) {
+            // 744 / 12 = 62. 2026 - 62 = 1964.
+            if(val === "1964") {
+                alert("ПЕЧАТЬ ПЕРЕХВАЧЕНА! Инспектор Леви и его связной задержаны в туннелях Езекии. Артефакт возвращен в музей.");
                 location.reload();
             }
         }
         document.getElementById('main-input').value = "";
-        log.scrollTop = 9999;
-    }
-
-    function unlockLoc(id) {
-        const el = document.getElementById(`loc-${id}`);
-        el.classList.remove('locked');
-        selectLoc(id);
-    }
-
-    function selectLoc(id) {
-        if(document.getElementById(`loc-${id}`).classList.contains('locked')) return;
-        document.querySelectorAll('.location-node').forEach(n => n.classList.remove('active'));
-        document.getElementById(`loc-${id}`).classList.add('active');
+        journal.scrollTop = 9999;
     }
 
     init();
 </script>
+
 </body>
 </html>
