@@ -2,154 +2,153 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>OSINT TERMINAL | QUANTUM DYNAMICS</title>
+    <title>UNIT 8200 - FORENSIC TERMINAL</title>
     <style>
-        :root { --neon: #00ff41; --bg: #0a0a0a; --dim: #003b00; --warn: #ffb000; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Consolas', monospace; margin: 0; padding: 20px; }
+        :root { --blue: #005eb8; --gold: #c2b280; --bg: #0a0e14; --text: #d1d9e1; }
+        body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; margin: 0; padding: 20px; }
         
-        #console { max-width: 1200px; margin: 0 auto; border: 1px solid var(--dim); padding: 20px; min-height: 90vh; box-shadow: 0 0 20px rgba(0,255,65,0.05); }
-        header { border-bottom: 2px solid var(--dim); padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        #case-folder { max-width: 1200px; margin: 0 auto; border: 2px solid var(--blue); padding: 30px; box-shadow: 0 0 40px rgba(0, 94, 184, 0.2); background: #0d121a; }
+        header { border-bottom: 1px solid var(--blue); padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; }
         
-        .layout { display: grid; grid-template-columns: 1fr 400px; gap: 30px; }
-        #output { background: #000; border: 1px solid #111; padding: 20px; min-height: 400px; border-left: 3px solid var(--neon); overflow-y: auto; margin-bottom: 20px; }
+        .main-grid { display: grid; grid-template-columns: 1fr 400px; gap: 35px; }
+        #display-log { background: #000; border: 1px solid #1c2633; padding: 20px; min-height: 400px; font-size: 0.9em; line-height: 1.6; border-left: 4px solid var(--blue); }
         
-        .module { display: none; background: #0d0d0d; border: 1px solid var(--dim); padding: 20px; }
-        .input-cmd { background: transparent; border: none; border-bottom: 1px solid var(--neon); color: var(--neon); width: 100%; font-size: 1.2em; outline: none; margin: 10px 0; }
+        .module { display: none; margin-top: 20px; background: #131a26; padding: 20px; border: 1px solid #222; }
+        .input-term { background: #000; border: 1px solid var(--blue); color: var(--blue); padding: 10px; width: 100%; box-sizing: border-box; font-family: inherit; margin: 10px 0; outline: none; }
         
-        .nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        button { background: #000; border: 1px solid var(--dim); color: var(--dim); padding: 12px; cursor: pointer; text-transform: uppercase; font-size: 0.8em; }
-        button:hover:not(:disabled) { border-color: var(--neon); color: var(--neon); }
-        button.unlocked { color: var(--warn); border-color: var(--warn); }
-        
-        .dossier { font-size: 0.8em; border: 1px solid var(--dim); padding: 15px; margin-bottom: 10px; }
-        .clue { color: var(--warn); font-size: 0.75em; border: 1px dashed var(--warn); padding: 5px; margin-top: 5px; display: inline-block; }
+        .nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 25px; }
+        button { background: #1a2533; border: 1px solid #333; color: #888; padding: 15px; cursor: pointer; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; }
+        button:hover { border-color: var(--blue); color: white; }
+        button.unlocked { border-color: var(--gold); color: var(--gold); }
+
+        .dossier { border: 1px solid #1c2633; padding: 15px; margin-bottom: 15px; cursor: pointer; transition: 0.2s; background: #0d121a; }
+        .dossier:hover { border-color: var(--blue); background: #131a26; }
+        .clue-box { background: rgba(0, 94, 184, 0.1); border: 1px solid var(--blue); color: #70a1ff; padding: 5px 10px; font-size: 0.75em; display: inline-block; margin: 3px; }
     </style>
 </head>
 <body>
 
-<div id="console">
+<div id="case-folder">
     <header>
-        <div>SYSTEM: KERNEL_V.4.0.1 | STATUS: SECURITY_BREACH</div>
-        <div id="timer">01:00:00</div>
+        <div>
+            <h1 style="margin:0; font-size: 1.4em; letter-spacing: 3px; color: var(--blue);">NEGEV-QUANTUM | SECURITY INCIDENT</h1>
+            <small>СТАТУС: ОСОБАЯ ПРОВЕРКА | 16 МАРТА 2026</small>
+        </div>
+        <div id="timer" style="color:var(--gold); font-weight:bold;">01:00:00</div>
     </header>
 
-    <div class="layout">
-        <div class="main">
-            <div id="output">
-                <p>> Инициализация системы...</p>
-                <p>> ВНИМАНИЕ: Зафиксирована аномалия в криогенном контуре. Прототип Q-1 исчез из вакуумной камеры. <br>
-                > Система безопасности была деактивирована через терминал администратора подсети <b>192.168.10.x</b>.</p>
-                <p>> ЗАДАЧА: Вычислите IP-адрес администратора. <br>
-                <i>Подсказка: IP-адрес — это (Номер кабинета инженера).(Этаж).(Сдвиг частоты Wi-Fi в MHz).</i></p>
+    <div class="main-grid">
+        <div class="terminal">
+            <div id="display-log">
+                <p><b>ОТЧЕТ СИСТЕМЫ:</b> Зафиксирован несанкционированный доступ к серверу "Galileo" в 03:14 утра. <br><br>
+                Авторизация прошла по временному коду, сгенерированному через терминал в <b>Кирьят-Гате</b>. <br>
+                Ключ доступа — это <b>сумма года окончания службы в ЦАХАЛ офицера безопасности и номера части инженера</b>.</p>
+                <p><i>Изучите досье, чтобы вычислить ключ авторизации.</i></p>
             </div>
 
-            <div id="mod-net" class="module" style="display:block;">
-                <p class="highlight">GATEWAY_LOGIN:</p>
-                <input type="text" id="net-input" class="input-cmd" placeholder="XXX.XXX.XXX.XXX">
-                <button onclick="checkNet()">CONNECT</button>
+            <div id="mod-auth" class="module" style="display:block;">
+                <p>ВВЕДИТЕ КЛЮЧ АВТОРИЗАЦИИ (4 ЦИФРЫ):</p>
+                <input type="number" id="auth-code" class="input-term" placeholder="PASSCODE">
+                <button onclick="checkAuth()">ВЫПОЛНИТЬ ВХОД</button>
             </div>
 
-            <div id="mod-cryo" class="module">
-                <p class="highlight">АНАЛИЗ ТЕМПЕРАТУРНЫХ ПИКОВ:</p>
-                <p>Процессор Q-1 выделяет 25Вт тепла при работе. Сопоставьте расход азота (л/ч) с тепловыделением, чтобы найти момент извлечения.</p>
-                <input type="number" id="cryo-input" class="input-cmd" placeholder="ВВЕДИТЕ ВРЕМЯ (ЧЧММ)">
-                <button onclick="checkCryo()">ANALYZE_THERMAL</button>
+            <div id="mod-logs" class="module">
+                <p>IP-адрес злоумышленника маскировался через VPN. Однако остался "цифровой отпечаток" — время пинга совпадает с расстоянием до города проживания одного из сотрудников.</p>
+                <p>Введите расстояние (в км) от Тель-Авива до города подозреваемого.</p>
+                <input type="number" id="dist-code" class="input-term" placeholder="DISTANCE_KM">
+                <button onclick="checkDist()">ПРОВЕРИТЬ ГЕОЛОКАЦИЮ</button>
             </div>
 
-            <div id="mod-wifi" class="module">
-                <p class="highlight">RF_SPECTRUM_ANALYSIS:</p>
-                <div id="spectrum" style="height:100px; border:1px solid #222; margin:10px 0; background: repeating-linear-gradient(90deg, #000, #000 10px, #050505 10px, #050505 20px);"></div>
-                <p>Анализ частот 2.4GHz и 5GHz. Введите номер канала, на котором произошла утечка пакетов.</p>
-                <input type="number" id="wifi-input" class="input-cmd" placeholder="CHANNEL_ID">
-                <button onclick="checkWifi()">EXECUTE_OSINT</button>
+            <div id="mod-bank" class="module">
+                <p>Обнаружен подозрительный перевод в <b>шекелях (ILS)</b>. <br>
+                Сумма равна: <b>(Номер части инженера) * (ID офицера СБ) / 2</b>.</p>
+                <input type="number" id="bank-code" class="input-term" placeholder="ILS_AMOUNT">
+                <button onclick="checkBank()">ПОДТВЕРДИТЬ ТРАНЗАКЦИЮ</button>
             </div>
 
             <div class="nav">
-                <button onclick="showM('mod-net')">СЕТЬ</button>
-                <button id="btn-cryo" disabled onclick="showM('mod-cryo')">КРИО-ЛОГ</button>
-                <button id="btn-wifi" disabled onclick="showM('mod-wifi')">WIFI-СКАН</button>
-                <button id="btn-final" disabled style="border-color:red" onclick="finalAccusation()">ОТЧЕТ СБ</button>
+                <button onclick="showM('mod-auth')">АВТОРИЗАЦИЯ</button>
+                <button id="btn-logs" onclick="showM('mod-logs')" disabled>ГЕО-ЛОГИ</button>
+                <button id="btn-bank" onclick="showM('mod-bank')" disabled>БАНК</button>
+                <button id="btn-final" onclick="submitCase()" style="color:var(--gold)" disabled>ОТЧЕТ</button>
             </div>
         </div>
 
-        <div class="side">
-            <h3 style="font-size:0.8em;">БАЗА СОТРУДНИКОВ:</h3>
-            <div id="staff"></div>
-            <h3 style="font-size:0.8em; margin-top:20px;">ПЕРЕХВАЧЕННЫЕ ДАННЫЕ:</h3>
+        <div class="sidebar">
+            <h3 style="font-size:0.8em; color:var(--blue); border-bottom:1px solid #1c2633;">БАЗА: ЛИЧНЫЕ ДАННЫЕ</h3>
+            <div id="dossiers"></div>
+            <h3 style="font-size:0.8em; color:var(--blue); border-bottom:1px solid #1c2633; margin-top:30px;">НАЙДЕННЫЕ УЛИКИ</h3>
             <div id="clues"></div>
         </div>
     </div>
 </div>
 
 <script>
-    const db = {
-        ivanov: { name: "Д-р Иванов (Гл. Инженер)", bio: "Кабинет: 102. Этаж: 4. Частота Wi-Fi его ноутбука: 5500 MHz. В 14:00 зафиксирован скачок азота." },
-        petrov: { name: "Петров (Системщик)", bio: "Доступ к подсети .10. Работает на 2-м этаже. Использует канал 11 (2462 MHz) для отладки." },
-        sidorov: { name: "Сидоров (Лаборант)", bio: "ID: 404. Был замечен в крио-камере в 14:15. Утверждает, что проверял датчики давления." }
+    const personnel = {
+        ariel: { name: "Ариэль (СБ)", data: "ID: <b>770</b>. Служил в 8200, демобилизован в <b>2015</b> году. Проживает в Ашдоде." },
+        noam: { name: "Ноам (Инженер)", data: "Номер части ЦАХАЛ: <b>338</b>. Ведущий разработчик. Проживает в Хайфе (расстояние до ТА — <b>95</b> км)." },
+        yossi: { name: "Йосси (Техник)", data: "ID: 412. Служил в инженерных войсках. Проживает в Ришон-ле-Ционе (расстояние до ТА — 12 км)." }
     };
 
     let state = { clues: new Set(), time: 3600 };
 
     function init() {
-        const sList = document.getElementById('staff');
-        for(let k in db) {
+        const container = document.getElementById('dossiers');
+        for(let k in personnel) {
             const div = document.createElement('div');
             div.className = 'dossier';
-            div.innerHTML = `<b>${db[k].name}</b><br><small>Доступ к архиву...</small>`;
+            div.innerHTML = `<b>${personnel[k].name}</b>`;
             div.onclick = () => {
-                document.getElementById('output').innerHTML = `<h3>АРХИВ: ${db[k].name}</h3><p>${db[k].bio}</p>`;
+                document.getElementById('display-log').innerHTML = `<h3>LOG_ENTRY: ${personnel[k].name}</h3><p>${personnel[k].data}</p>`;
             };
-            sList.appendChild(div);
+            container.appendChild(div);
         }
-        startClock();
     }
 
-    // ЛОГИКА 1: IP = Кабинет(102).Этаж(4).Сдвиг(5500 - стандарт 5000 = 500) -> 102.4.500 (Условно)
-    // Давай упростим формулу для игрока: Кабинет.Этаж.(Частота/100) -> 102.4.55
-    function checkNet() {
-        if(document.getElementById('net-input').value === "102.4.55") {
-            addClue("IP_AUTH: Доступ разрешен");
-            document.getElementById('output').innerHTML = `<h3>СЕТЬ ВЗЛОМАНА</h3><p>Лог доступа: В 14:02 администратор Иванов вошел в систему. Но Иванов был на совещании. Значит, кто-то использовал его IP.</p>`;
-            document.getElementById('btn-cryo').disabled = false;
-            showM('mod-cryo');
-        } else { alert("ERROR: Неверный сетевой адрес."); }
+    // ЛОГИКА 1: Год Ариэля (2015) + Часть Ноама (338) = 2353.
+    function checkAuth() {
+        if(document.getElementById('auth-code').value === "2353") {
+            addC("Код 2353: Доступ получен");
+            document.getElementById('display-log').innerHTML = `<h3>ДОСТУП ОТКРЫТ</h3><p>Вы вошли под учетной записью администратора. Логи показывают, что запрос на копирование кода пришел из сети, физически расположенной в Хайфе.</p>`;
+            document.getElementById('btn-logs').disabled = false;
+            showM('mod-logs');
+        } else { alert("КЛЮЧ НЕВЕРЕН"); }
     }
 
-    // ЛОГИКА 2: В досье Иванова указано 14:00 (скачок).
-    function checkCryo() {
-        if(document.getElementById('cryo-input').value === "1400") {
-            addClue("TIME_STAMP: 14:00");
-            document.getElementById('output').innerHTML = `<h3>КРИО-АНАЛИЗ</h3><p>В 14:00 давление упало. Камера была открыта. Спустя 2 минуты трафик из лаборатории резко вырос на канале 11.</p>`;
-            document.getElementById('btn-wifi').disabled = false;
-            showM('mod-wifi');
-        } else { alert("АНАЛИЗ: Аномалий не обнаружено."); }
+    // ЛОГИКА 2: Расстояние Хайфы до Тель-Авива = 95 км.
+    function checkDist() {
+        if(document.getElementById('dist-code').value === "95") {
+            addC("Геолокация: Хайфа");
+            document.getElementById('display-log').innerHTML = `<h3>ГЕО-АНАЛИЗ ЗАВЕРШЕН</h3><p>Точка доступа подтверждена. Ноам заходил в систему из своего дома в Хайфе, хотя в это время он должен был быть в отпуске в Эйлате.</p>`;
+            document.getElementById('btn-bank').disabled = false;
+            showM('mod-bank');
+        } else { alert("ЛОКАЦИЯ НЕ СОВПАДАЕТ"); }
     }
 
-    // ЛОГИКА 3: Петров использует канал 11.
-    function checkWifi() {
-        if(document.getElementById('wifi-input').value === "11") {
-            addClue("CHANNEL_ID: 11 (Утечка)");
-            document.getElementById('output').innerHTML = `<h3>OSINT УСПЕШЕН</h3><p>Через канал 11 (устройство Петрова) был передан архив весом 2Гб. Это чертежи процессора Q-1. Теперь нужно сопоставить всё в итоговом отчете.</p>`;
+    // ЛОГИКА 3: (Часть Ноама 338 * ID Ариэля 770) / 2 = 130130.
+    function checkBank() {
+        if(document.getElementById('bank-code').value === "130130") {
+            addC("Транзакция: 130,130 ILS");
+            document.getElementById('display-log').innerHTML = `<h3>ФИНАНСОВЫЙ СЛЕД</h3><p>На счет Ноама поступил перевод в размере 130,130 шекелей. Отправитель — компания-конкурент. Все доказательства собраны.</p>`;
             document.getElementById('btn-final').disabled = false;
-        } else { alert("SIGNAL ERROR: На этой частоте тишина."); }
+        } else { alert("ТРАНЗАКЦИЯ НЕ НАЙДЕНА"); }
     }
 
-    function finalAccusation() {
-        const who = prompt("КТО ПЕРЕДАЛ ДАННЫЕ? (Фамилия)");
-        const tech = prompt("ЧЕЙ IP БЫЛ ИСПОЛЬЗОВАН?");
-        if(who.toLowerCase().includes("петров") && tech.toLowerCase().includes("иванов")) {
-            alert("ПОЗДРАВЛЯЕМ! Вы раскрыли промышленный шпионаж. Петров внедрен конкурентами.");
-        } else { alert("ОШИБКА: Подозреваемый успел удалить логи."); }
+    function submitCase() {
+        const suspect = prompt("КТО ИНСАЙДЕР?");
+        if(suspect.toLowerCase().includes("ноам")) {
+            alert("МАЗАЛЬ ТОВ! Вы раскрыли дело. Ноам задержан спецслужбами.");
+        } else { alert("ОШИБКА. Преступник уничтожил улики."); }
         location.reload();
     }
 
-    function addClue(t) {
+    function addC(t) {
         state.clues.add(t);
         const l = document.getElementById('clues');
         l.innerHTML = "";
         state.clues.forEach(c => {
             const s = document.createElement('span');
-            s.className = 'clue';
+            s.className = 'clue-box';
             s.innerText = c;
             l.appendChild(s);
         });
@@ -158,14 +157,6 @@
     function showM(id) {
         document.querySelectorAll('.module').forEach(m => m.style.display = 'none');
         document.getElementById(id).style.display = 'block';
-    }
-
-    function startClock() {
-        setInterval(() => {
-            state.time--;
-            let m = Math.floor(state.time/60), s = state.time%60;
-            document.getElementById('timer').innerText = `${m}:${s<10?'0'+s:s}`;
-        }, 1000);
     }
 
     init();
