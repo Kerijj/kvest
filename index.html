@@ -2,154 +2,176 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>UNIT 8200 - FORENSIC TERMINAL</title>
+    <title>IDF CYBER COMMAND | CASE 8200-X</title>
     <style>
-        :root { --blue: #005eb8; --gold: #c2b280; --bg: #0a0e14; --text: #d1d9e1; }
-        body { background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; margin: 0; padding: 20px; }
+        :root { --blue: #005eb8; --neon: #00f2ff; --bg: #05080a; --gray: #4a5568; }
+        body { background: var(--bg); color: #a0aec0; font-family: 'Consolas', monospace; margin: 0; padding: 20px; }
         
-        #case-folder { max-width: 1200px; margin: 0 auto; border: 2px solid var(--blue); padding: 30px; box-shadow: 0 0 40px rgba(0, 94, 184, 0.2); background: #0d121a; }
-        header { border-bottom: 1px solid var(--blue); padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; }
+        #frame { max-width: 1400px; margin: 0 auto; border: 1px solid var(--blue); padding: 30px; background: #080c10; box-shadow: 0 0 50px rgba(0,242,255,0.1); }
+        header { border-bottom: 2px solid var(--blue); padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; }
         
-        .main-grid { display: grid; grid-template-columns: 1fr 400px; gap: 35px; }
-        #display-log { background: #000; border: 1px solid #1c2633; padding: 20px; min-height: 400px; font-size: 0.9em; line-height: 1.6; border-left: 4px solid var(--blue); }
+        .layout { display: grid; grid-template-columns: 1fr 450px; gap: 40px; }
+        #console-out { background: #000; border: 1px solid #1a202c; padding: 25px; min-height: 450px; color: var(--neon); line-height: 1.6; border-left: 5px solid var(--blue); }
         
-        .module { display: none; margin-top: 20px; background: #131a26; padding: 20px; border: 1px solid #222; }
-        .input-term { background: #000; border: 1px solid var(--blue); color: var(--blue); padding: 10px; width: 100%; box-sizing: border-box; font-family: inherit; margin: 10px 0; outline: none; }
+        .module { display: none; margin-top: 25px; padding: 25px; background: #0d1117; border: 1px solid #1e293b; }
+        .input-term { background: #000; border: 1px solid var(--gray); color: var(--neon); padding: 12px; width: 100%; box-sizing: border-box; font-size: 1.1em; outline: none; margin: 10px 0; }
+        .input-term:focus { border-color: var(--neon); }
         
-        .nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 25px; }
-        button { background: #1a2533; border: 1px solid #333; color: #888; padding: 15px; cursor: pointer; text-transform: uppercase; font-size: 0.7em; letter-spacing: 1px; }
-        button:hover { border-color: var(--blue); color: white; }
-        button.unlocked { border-color: var(--gold); color: var(--gold); }
+        .nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 30px; }
+        button { background: #1a202c; border: 1px solid #2d3748; color: #718096; padding: 15px; cursor: pointer; text-transform: uppercase; font-size: 0.75em; transition: 0.3s; }
+        button:hover { border-color: var(--neon); color: #fff; }
+        button.active { border-color: var(--neon); color: var(--neon); background: #1a202c; }
 
-        .dossier { border: 1px solid #1c2633; padding: 15px; margin-bottom: 15px; cursor: pointer; transition: 0.2s; background: #0d121a; }
-        .dossier:hover { border-color: var(--blue); background: #131a26; }
-        .clue-box { background: rgba(0, 94, 184, 0.1); border: 1px solid var(--blue); color: #70a1ff; padding: 5px 10px; font-size: 0.75em; display: inline-block; margin: 3px; }
+        .dossier-card { border: 1px solid #1e293b; padding: 15px; margin-bottom: 12px; cursor: pointer; background: #0d1117; }
+        .dossier-card:hover { border-color: var(--blue); }
+        .tag { background: rgba(0, 242, 255, 0.1); color: var(--neon); padding: 3px 8px; font-size: 0.7em; margin-right: 5px; border: 1px solid rgba(0, 242, 255, 0.3); }
+        
+        .status-red { color: #ff4d4d; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="case-folder">
+<div id="frame">
     <header>
         <div>
-            <h1 style="margin:0; font-size: 1.4em; letter-spacing: 3px; color: var(--blue);">NEGEV-QUANTUM | SECURITY INCIDENT</h1>
-            <small>СТАТУС: ОСОБАЯ ПРОВЕРКА | 16 МАРТА 2026</small>
+            <h1 style="margin:0; font-size: 1.6em; letter-spacing: 4px; color: var(--blue);">CENTRAL UNIT 8200 | FORENSIC</h1>
+            <small>NODE: HERZLIYA_SERVER_7 | <span id="current-date">MARCH 16, 2026</span></small>
         </div>
-        <div id="timer" style="color:var(--gold); font-weight:bold;">01:00:00</div>
+        <div id="timer" style="font-size: 1.5em; color: var(--neon);">59:59</div>
     </header>
 
-    <div class="main-grid">
-        <div class="terminal">
-            <div id="display-log">
-                <p><b>ОТЧЕТ СИСТЕМЫ:</b> Зафиксирован несанкционированный доступ к серверу "Galileo" в 03:14 утра. <br><br>
-                Авторизация прошла по временному коду, сгенерированному через терминал в <b>Кирьят-Гате</b>. <br>
-                Ключ доступа — это <b>сумма года окончания службы в ЦАХАЛ офицера безопасности и номера части инженера</b>.</p>
-                <p><i>Изучите досье, чтобы вычислить ключ авторизации.</i></p>
+    <div class="layout">
+        <div class="work-area">
+            <div id="console-out">
+                <p>> Инициализация системы безопасности "Iron Vault"...</p>
+                <p>> ВНИМАНИЕ: Зафиксирована утечка пакетов на внешний DNS-сервер. <br>
+                > Инцидент произошел в блоке "Махон" во время обеденного перерыва. <br><br>
+                > ДЛЯ ДОСТУПА К ТРАФИКУ ВВЕДИТЕ АЛГОРИТМ: <br>
+                <b>(Год дембеля Ариэля * 2) - (Номер части Ноама)</b></p>
             </div>
 
             <div id="mod-auth" class="module" style="display:block;">
-                <p>ВВЕДИТЕ КЛЮЧ АВТОРИЗАЦИИ (4 ЦИФРЫ):</p>
-                <input type="number" id="auth-code" class="input-term" placeholder="PASSCODE">
-                <button onclick="checkAuth()">ВЫПОЛНИТЬ ВХОД</button>
+                <p class="highlight">ВВЕДИТЕ РЕЗУЛЬТАТ ВЫЧИСЛЕНИЙ:</p>
+                <input type="number" id="auth-input" class="input-term" placeholder="COMPUTE_VAL">
+                <button onclick="checkAuth()">DECRYPT_GATEWAY</button>
             </div>
 
-            <div id="mod-logs" class="module">
-                <p>IP-адрес злоумышленника маскировался через VPN. Однако остался "цифровой отпечаток" — время пинга совпадает с расстоянием до города проживания одного из сотрудников.</p>
-                <p>Введите расстояние (в км) от Тель-Авива до города подозреваемого.</p>
-                <input type="number" id="dist-code" class="input-term" placeholder="DISTANCE_KM">
-                <button onclick="checkDist()">ПРОВЕРИТЬ ГЕОЛОКАЦИЮ</button>
+            <div id="mod-dns" class="module">
+                <p class="highlight">ПЕРЕХВАТ ПАКЕТОВ (DNS Tunneling):</p>
+                <p>Злоумышленник использовал HEX-код своего города в качестве субдомена. <br>
+                Найдите в досье HEX-значение (например, 0x...) и переведите его в десятичное число.</p>
+                <input type="number" id="dns-input" class="input-term" placeholder="DECIMAL_VAL">
+                <button onclick="checkDNS()">RESOLVE_DOMAIN</button>
             </div>
 
-            <div id="mod-bank" class="module">
-                <p>Обнаружен подозрительный перевод в <b>шекелях (ILS)</b>. <br>
-                Сумма равна: <b>(Номер части инженера) * (ID офицера СБ) / 2</b>.</p>
-                <input type="number" id="bank-code" class="input-term" placeholder="ILS_AMOUNT">
-                <button onclick="checkBank()">ПОДТВЕРДИТЬ ТРАНЗАКЦИЮ</button>
+            <div id="mod-behave" class="module">
+                <p class="highlight">АНАЛИЗ ВРЕМЕННЫХ МЕТОК:</p>
+                <p>Кто из сотрудников находился за терминалом в 13:45? <br>
+                Учтите: <b>Йосси</b> ушел на молитву "Минха", <b>Ариэль</b> был на совещании. <br>
+                Введите ID сотрудника, у которого нет алиби.</p>
+                <input type="number" id="behave-input" class="input-term" placeholder="STAFF_ID">
+                <button onclick="checkBehave()">CONFIRM_IDENTITY</button>
             </div>
 
             <div class="nav">
-                <button onclick="showM('mod-auth')">АВТОРИЗАЦИЯ</button>
-                <button id="btn-logs" onclick="showM('mod-logs')" disabled>ГЕО-ЛОГИ</button>
-                <button id="btn-bank" onclick="showM('mod-bank')" disabled>БАНК</button>
-                <button id="btn-final" onclick="submitCase()" style="color:var(--gold)" disabled>ОТЧЕТ</button>
+                <button onclick="showM('mod-auth')" class="active">Шлюз</button>
+                <button id="btn-dns" onclick="showM('mod-dns')" disabled>DNS-Лог</button>
+                <button id="btn-behave" onclick="showM('mod-behave')" disabled>Поведение</button>
+                <button id="btn-final" onclick="submitFinal()" style="color:var(--neon)" disabled>ЗАКРЫТЬ ДЕЛО</button>
             </div>
         </div>
 
         <div class="sidebar">
-            <h3 style="font-size:0.8em; color:var(--blue); border-bottom:1px solid #1c2633;">БАЗА: ЛИЧНЫЕ ДАННЫЕ</h3>
-            <div id="dossiers"></div>
-            <h3 style="font-size:0.8em; color:var(--blue); border-bottom:1px solid #1c2633; margin-top:30px;">НАЙДЕННЫЕ УЛИКИ</h3>
-            <div id="clues"></div>
+            <h3 style="font-size:0.8em; color:var(--blue);">INTEL_BASE: STAFF</h3>
+            <div id="staff-list"></div>
+            <h3 style="font-size:0.8em; color:var(--blue); margin-top:30px;">СИСТЕМНЫЕ УЛИКИ</h3>
+            <div id="evidence-list"></div>
         </div>
     </div>
 </div>
 
 <script>
-    const personnel = {
-        ariel: { name: "Ариэль (СБ)", data: "ID: <b>770</b>. Служил в 8200, демобилизован в <b>2015</b> году. Проживает в Ашдоде." },
-        noam: { name: "Ноам (Инженер)", data: "Номер части ЦАХАЛ: <b>338</b>. Ведущий разработчик. Проживает в Хайфе (расстояние до ТА — <b>95</b> км)." },
-        yossi: { name: "Йосси (Техник)", data: "ID: 412. Служил в инженерных войсках. Проживает в Ришон-ле-Ционе (расстояние до ТА — 12 км)." }
+    const staff = {
+        ariel: { 
+            name: "Ариэль (СБ)", 
+            bio: "ID: 770. Дембель: <b>2015</b>. Группа: СБ. <br><span class='tag'>Unit 8200</span> <span class='tag'>Ex-Officer</span>",
+            extra: "В 13:30 - 14:30 был в комнате совещаний с гендиректором."
+        },
+        noam: { 
+            name: "Ноам (Инженер)", 
+            bio: "ID: <b>338</b>. Часть ЦАХАЛ: 338. Проживает в Хайфе (HEX_CITY: <b>0x5F</b>). <br><span class='tag'>Full-Stack</span>",
+            extra: "Отказался идти на обед, сославшись на срочный дебаг."
+        },
+        yossi: { 
+            name: "Йосси (Техник)", 
+            bio: "ID: 412. Часть ЦАХАЛ: 101. Проживает в Ришоне. <br><span class='tag'>Support</span>",
+            extra: "Религиозен. С 13:30 до 14:00 находится в молельной комнате."
+        }
     };
 
-    let state = { clues: new Set(), time: 3600 };
+    let state = { clues: new Set(), time: 3599 };
 
     function init() {
-        const container = document.getElementById('dossiers');
-        for(let k in personnel) {
-            const div = document.createElement('div');
-            div.className = 'dossier';
-            div.innerHTML = `<b>${personnel[k].name}</b>`;
-            div.onclick = () => {
-                document.getElementById('display-log').innerHTML = `<h3>LOG_ENTRY: ${personnel[k].name}</h3><p>${personnel[k].data}</p>`;
+        const list = document.getElementById('staff-list');
+        for(let k in staff) {
+            const d = document.createElement('div');
+            d.className = 'dossier-card';
+            d.innerHTML = `<b>${staff[k].name}</b>`;
+            d.onclick = () => {
+                document.getElementById('console-out').innerHTML = `<h3>ДОСЬЕ: ${staff[k].name}</h3><p>${staff[k].bio}</p><hr style='border:0;border-top:1px solid #1e293b'><p>${staff[k].extra}</p>`;
             };
-            container.appendChild(div);
+            list.appendChild(d);
         }
+        startTimer();
     }
 
-    // ЛОГИКА 1: Год Ариэля (2015) + Часть Ноама (338) = 2353.
+    // ЛОГИКА 1: (2015 * 2) - 338 = 4030 - 338 = 3692.
     function checkAuth() {
-        if(document.getElementById('auth-code').value === "2353") {
-            addC("Код 2353: Доступ получен");
-            document.getElementById('display-log').innerHTML = `<h3>ДОСТУП ОТКРЫТ</h3><p>Вы вошли под учетной записью администратора. Логи показывают, что запрос на копирование кода пришел из сети, физически расположенной в Хайфе.</p>`;
-            document.getElementById('btn-logs').disabled = false;
-            showM('mod-logs');
-        } else { alert("КЛЮЧ НЕВЕРЕН"); }
+        if(document.getElementById('auth-input').value === "3692") {
+            addE("Вход выполнен: Алгоритм ЦАХАЛ");
+            document.getElementById('console-out').innerHTML = `<h3>СИСТЕМА РАЗБЛОКИРОВАНА</h3><p>Доступ к логам трафика получен. <br>Обнаружен скрытый туннель: <b>[HEX_VALUE].quantum-leak.com</b></p>`;
+            document.getElementById('btn-dns').disabled = false;
+            showM('mod-dns');
+        } else { alert("ACCESS_DENIED: Ошибка алгоритма."); }
     }
 
-    // ЛОГИКА 2: Расстояние Хайфы до Тель-Авива = 95 км.
-    function checkDist() {
-        if(document.getElementById('dist-code').value === "95") {
-            addC("Геолокация: Хайфа");
-            document.getElementById('display-log').innerHTML = `<h3>ГЕО-АНАЛИЗ ЗАВЕРШЕН</h3><p>Точка доступа подтверждена. Ноам заходил в систему из своего дома в Хайфе, хотя в это время он должен был быть в отпуске в Эйлате.</p>`;
-            document.getElementById('btn-bank').disabled = false;
-            showM('mod-bank');
-        } else { alert("ЛОКАЦИЯ НЕ СОВПАДАЕТ"); }
+    // ЛОГИКА 2: HEX 0x5F = (5 * 16) + 15 = 80 + 15 = 95.
+    function checkDNS() {
+        if(document.getElementById('dns-input').value === "95") {
+            addE("DNS_RESOLVE: Хайфа (95)");
+            document.getElementById('console-out').innerHTML = `<h3>ДОМЕН РАСШИФРОВАН</h3><p>Субдомен 95 соответствует географическому идентификатору Хайфы. Пакеты уходили на сервер, зарегистрированный в этом секторе.</p>`;
+            document.getElementById('btn-behave').disabled = false;
+            showM('mod-behave');
+        } else { alert("ERROR: Домен не резолвится."); }
     }
 
-    // ЛОГИКА 3: (Часть Ноама 338 * ID Ариэля 770) / 2 = 130130.
-    function checkBank() {
-        if(document.getElementById('bank-code').value === "130130") {
-            addC("Транзакция: 130,130 ILS");
-            document.getElementById('display-log').innerHTML = `<h3>ФИНАНСОВЫЙ СЛЕД</h3><p>На счет Ноама поступил перевод в размере 130,130 шекелей. Отправитель — компания-конкурент. Все доказательства собраны.</p>`;
+    // ЛОГИКА 3: ID Ноама = 338. (Йосси на молитве, Ариэль на совещании).
+    function checkBehave() {
+        if(document.getElementById('behave-input').value === "338") {
+            addE("Фигурант: Ноам (ID 338)");
+            document.getElementById('console-out').innerHTML = `<h3>ЛИЧНОСТЬ ПОДТВЕРЖДЕНА</h3><p>Ноам — единственный, кто находился в блоке "Махон" в момент скачка трафика. Все косвенные улики указывают на него.</p>`;
             document.getElementById('btn-final').disabled = false;
-        } else { alert("ТРАНЗАКЦИЯ НЕ НАЙДЕНА"); }
+        } else { alert("ОШИБКА: У этого сотрудника есть подтвержденное алиби."); }
     }
 
-    function submitCase() {
-        const suspect = prompt("КТО ИНСАЙДЕР?");
-        if(suspect.toLowerCase().includes("ноам")) {
-            alert("МАЗАЛЬ ТОВ! Вы раскрыли дело. Ноам задержан спецслужбами.");
-        } else { alert("ОШИБКА. Преступник уничтожил улики."); }
+    function submitFinal() {
+        const confirm = prompt("ВВЕДИТЕ ФАМИЛИЮ ДЛЯ ОРДЕРА:");
+        if(confirm.toLowerCase().includes("ноам")) {
+            alert("UNIT 8200 УСПЕШНО ЗАВЕРШИЛ ОПЕРАЦИЮ. Ноам перехвачен по дороге в аэропорт Бен-Гурион.");
+        }
         location.reload();
     }
 
-    function addC(t) {
+    function addE(t) {
         state.clues.add(t);
-        const l = document.getElementById('clues');
+        const l = document.getElementById('evidence-list');
         l.innerHTML = "";
         state.clues.forEach(c => {
-            const s = document.createElement('span');
-            s.className = 'clue-box';
-            s.innerText = c;
+            const s = document.createElement('div');
+            s.className = 'tag';
+            s.style.display = 'block';
+            s.style.marginBottom = '5px';
+            s.innerText = `> ${c}`;
             l.appendChild(s);
         });
     }
@@ -157,6 +179,14 @@
     function showM(id) {
         document.querySelectorAll('.module').forEach(m => m.style.display = 'none');
         document.getElementById(id).style.display = 'block';
+    }
+
+    function startTimer() {
+        setInterval(() => {
+            state.time--;
+            let m = Math.floor(state.time/60), s = state.time%60;
+            document.getElementById('timer').innerText = `${m}:${s<10?'0'+s:s}`;
+        }, 1000);
     }
 
     init();
