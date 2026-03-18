@@ -2,161 +2,156 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>IAA - CASE: SOLOMON_SEAL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Досье №1944: Объект Будапешт</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Special+Elite&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <style>
-        :root { --parchment: #f4e4bc; --paper-dark: #261c15; --accent: #8b4513; --gold: #d4af37; --bg: #0f0f0f; }
-        body { background: var(--bg); color: var(--parchment); font-family: 'Times New Roman', serif; margin: 0; padding: 15px; overflow: hidden; }
-        
-        #main-layout { display: grid; grid-template-columns: 380px 1fr 400px; gap: 15px; height: 95vh; transition: 0.5s; }
-        .panel { border: 2px solid var(--accent); background: #1a1510; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
-        
-        /* Стилизация досье (мини-карточки) */
-        .suspect-thumb { border-bottom: 1px solid var(--accent); padding: 15px 0; cursor: pointer; transition: 0.3s; }
-        .suspect-thumb:hover { background: #261c15; padding-left: 10px; }
-        .suspect-thumb b { color: var(--gold); font-size: 1.1em; }
-        
-        /* Центральный журнал */
-        #journal-core { background: var(--parchment); color: #2c1810; padding: 30px; border-radius: 2px; position: relative; flex-grow: 1; box-shadow: inset 0 0 40px rgba(0,0,0,0.2); overflow-y: auto; }
-        #journal-core h2 { text-align: center; border-bottom: 2px solid #2c1810; padding-bottom: 10px; margin-top: 0; }
-        
-        /* Модальное окно полного досье */
-        #full-dossier { display: none; position: fixed; top: 5%; left: 5%; width: 90%; height: 85%; background: var(--paper-dark); border: 3px solid var(--gold); z-index: 100; padding: 40px; box-sizing: border-box; overflow-y: auto; box-shadow: 0 0 100px #000; }
-        .close-btn { position: absolute; top: 20px; right: 20px; color: var(--gold); cursor: pointer; font-size: 1.5em; border: 1px solid; padding: 5px 15px; }
-        .dossier-grid { display: grid; grid-template-columns: 300px 1fr; gap: 40px; }
-        .photo-placeholder { width: 100%; height: 350px; background: #111; border: 1px solid var(--accent); display: flex; align-items: center; justify-content: center; color: #333; font-weight: bold; }
+        :root {
+            --bg-color: #1a1a1a;
+            --paper-color: #2c2c2c;
+            --text-color: #e0e0e0;
+            --accent-red: #8b0000;
+            --accent-blue: #2e5a88;
+        }
 
-        /* Инпуты */
-        .input-box { background: #261c15; padding: 20px; border-top: 2px solid var(--gold); }
-        input { background: #000; border: 1px solid var(--accent); color: var(--gold); padding: 15px; width: 100%; box-sizing: border-box; font-size: 1.1em; outline: none; }
-        button { background: var(--accent); color: white; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-        .update-flash { color: var(--gold); animation: blink 1s infinite; font-weight: bold; font-size: 0.8em; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        #game-container {
+            width: 90%;
+            max-width: 800px;
+            background: var(--paper-color);
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            border: 1px solid #333;
+            position: relative;
+        }
+
+        .step { display: none; animation: fadeIn 1s ease-in-out forwards; }
+        .step.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; border-bottom: 2px solid var(--accent-red); padding-bottom: 10px; margin-top: 0; }
+        h2 { font-family: 'Special Elite', cursive; color: #aaa; text-transform: uppercase; letter-spacing: 2px; }
+        
+        p { line-height: 1.6; font-size: 1.1rem; }
+
+        .choices { display: flex; gap: 20px; margin-top: 30px; flex-wrap: wrap; }
+
+        button {
+            flex: 1;
+            padding: 20px;
+            font-family: 'Special Elite', cursive;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            transition: 0.3s;
+            color: white;
+            min-width: 250px;
+        }
+
+        .btn-next { background: #444; width: 100%; margin-top: 20px; }
+        .btn-next:hover { background: #555; }
+
+        .btn-path-a { background: var(--accent-blue); }
+        .btn-path-a:hover { background: #3d76b1; box-shadow: 0 0 15px var(--accent-blue); }
+
+        .btn-path-b { background: var(--accent-red); }
+        .btn-path-b:hover { background: #b30000; box-shadow: 0 0 15px var(--accent-red); }
+
+        .identity-reveal {
+            background: #000;
+            padding: 20px;
+            border-left: 5px solid var(--accent-red);
+            font-family: 'Special Elite', cursive;
+            margin-top: 20px;
+        }
+
+        .stats { font-style: italic; color: #888; margin-top: 15px; border-top: 1px solid #444; padding-top: 10px; }
     </style>
 </head>
 <body>
 
-<div id="main-layout">
-    <div class="panel">
-        <h3 style="color:var(--gold)">АРХИВ IAA: ФИГУРАНТЫ</h3>
-        <div id="suspects-list"></div>
+<div id="game-container">
+    <div id="step-1" class="step active">
+        <h2>Строго секретно</h2>
+        <h1>ОБЪЕКТ: БУДАПЕШТ, 1944</h1>
+        <p><strong>ЛИЧНОСТЬ:</strong> Юрист, журналист, блестящий переговорщик. Лидер общины.</p>
+        <p><strong>СИТУАЦИЯ:</strong> Нацисты оккупировали город. У него есть информация: всех евреев Венгрии (450 000 человек) планируют вывезти в Освенцим за считанные недели.</p>
+        <p>У него есть выбор: бежать самому или остаться и попытаться что-то предпринять. Он остается.</p>
+        <button class="btn-next" onclick="nextStep(2)">ВНИКНУТЬ В ДЕЛО</button>
     </div>
 
-    <div style="display: flex; flex-direction: column;">
-        <div id="journal-core">
-            <h2>ОПЕРАТИВНЫЙ ЖУРНАЛ: ДЕЛО "ПЕЧАТЬ ЦАРЯ"</h2>
-            <div id="log-content">
-                <p><b>ВВОДНАЯ СВОДКА:</b> 16 марта, 19:52. Обнаружена пропажа золотой печати IAA-744 из спецхранилища Музея Рокфеллера. Система охраны была деактивирована вручную.</p>
-                <p><b>ТЕКУЩИЙ СТАТУС:</b> Мы предполагаем, что артефакт все еще в черте Старого города. Группа по борьбе с хищениями (IAA Theft Prevention Unit) переведена в режим полной готовности.</p>
-                <p style="border-left: 3px solid var(--accent); padding-left: 10px; background: rgba(139, 69, 19, 0.1);">
-                    <i>"Печать весит 12 сиклей. Каждая крупица золота на черном рынке — это след. Если мы узнаем точный вес в граммах, мы сможем отследить транзакции по весу при попытке сбыта."</i>
-                </p>
-                <p>> <b>ЗАДАЧА 1:</b> Вычислите координату X (1/1000 веса в граммах), чтобы накрыть тайник Абу Саида.</p>
-            </div>
-        </div>
-
-        <div class="input-box">
-            <input type="text" id="main-input" placeholder="ВВЕДИТЕ ДАННЫЕ АНАЛИЗА...">
-            <button onclick="handleLogic()">ВЫПОЛНИТЬ ПРОВЕРКУ</button>
+    <div id="step-2" class="step">
+        <h2>Ключевой выбор</h2>
+        <p>В город прибывает Адольф Эйхман. Времени на раздумья нет. Община парализована страхом. Как глава комитета, вы должны выбрать стратегию прямо сейчас:</p>
+        <div class="choices">
+            <button class="btn-path-a" onclick="choosePath('A')">ПУТЬ ПЕРЕГОВОРОВ<br><small>Блефовать и торговаться с СС, чтобы выиграть время.</small></button>
+            <button class="btn-path-b" onclick="choosePath('B')">ПУТЬ ВОССТАНИЯ<br><small>Раскрыть правду об Освенциме и готовить сопротивление.</small></button>
         </div>
     </div>
 
-    <div class="panel">
-        <h3 style="color:var(--gold)">ПЕРЕХВАТЫ И ШИФРЫ</h3>
-        <div style="font-size: 0.85em; font-style: italic;">
-            <p><b>Перехват SMS:</b> "Бергман, печать у меня. Но цифры в твоих книгах не сходятся. Как глубоко копать?"</p>
-            <p><b>Заметка:</b> 3 Царств 10:14 — ключевой текст. Там скрыто число талантов золота (666).</p>
+    <div id="step-A3" class="step">
+        <h2>Сделка с дьяволом</h2>
+        <p>Вы идете на встречу с Эйхманом. Вы предлагаете грузовики в обмен на жизни. Это блеф, но он срабатывает частично. Вам дают <strong>один поезд</strong> в Швейцарию. 1684 места.</p>
+        <p><strong>Ваша ноша:</strong> Вы должны сами составить список. Кого вы спасете, зная, что остальные 450 000, скорее всего, погибнут?</p>
+        <div class="choices">
+            <button class="btn-next" onclick="nextStep('FinalA')">ОСТАВИТЬ СПИСОК И МОЛЧАТЬ</button>
         </div>
+        <p class="stats">Ваш выбор: спасти немногих ценой молчания перед остальными.</p>
     </div>
-</div>
 
-<div id="full-dossier">
-    <div class="close-btn" onclick="closeDossier()">X</div>
-    <div id="dossier-content"></div>
+    <div id="step-B3" class="step">
+        <h2>Правда любой ценой</h2>
+        <p>Вы отказываетесь от сделок. Вы распространяете отчеты об Освенциме. В городе начинается хаос. Люди знают правду, но у них нет оружия.</p>
+        <p>Нацисты в ярости ускоряют депортацию. Восстание подавлено. Вы погибаете с оружием в руках, так и не договорившись ни об одном спасенном поезде.</p>
+        <button class="btn-next" onclick="nextStep('FinalB')">УЗНАТЬ ФИНАЛ ИСТОРИИ</button>
+    </div>
+
+    <div id="step-Final" class="step">
+        <h1>РАССЛЕДОВАНИЕ ЗАВЕРШЕНО</h1>
+        <div class="identity-reveal">
+            ОБЪЕКТ: РУДОЛЬФ (ИСРАЭЛЬ) КАСТНЕР
+        </div>
+        <p id="final-text"></p>
+        <p>В 1957 году в Тель-Авиве его застрелили те, кто считал его предателем. Через год Верховный суд Израиля полностью оправдал его (посмертно).</p>
+        <div class="stats">
+            <strong>Итог:</strong> 1684 жизни спасены напрямую. 450 000 погибли. Был ли другой путь?
+        </div>
+        <button class="btn-next" onclick="location.reload()">НАЧАТЬ ЗАНОВО</button>
+    </div>
 </div>
 
 <script>
-    const db = {
-        bergman: {
-            name: "Проф. Элиэзер Бергман", age: 68, id: 405, 
-            brief: "Специалист по эпиграфике. Подозревается в связях с черным рынком.",
-            full: "<b>БИОГРАФИЯ:</b> 40 лет работы в Управлении древностей. В последнее время имел крупные долги. <br><br><b>ОБЫСК:</b> В кабинете найдена карта секторов G-12 с пометкой 'Тут лежит истина'. <br><b>СВЯЗИ:</b> Часто созванивался с Абу Саидом.",
-            unlocked: false
-        },
-        sara: {
-            name: "Сара Леви", age: 32, id: 225, 
-            brief: "Оценщик лаборатории. Дочь главного инспектора.",
-            full: "<b>ПРОТОКОЛ ДОПРОСА:</b> Утверждает, что зашла в хранилище в 03:00, но логи показывают её карту раньше. <br><br><b>СКРЫТЫЙ ФАКТ:</b> <span id='sara-secret'>[ЗАБЛОКИРОВАНО. НУЖЕН УРОВЕНЬ ДОСТУПА 2]</span>",
-            unlocked: false
-        },
-        abu: {
-            name: "Абу Саид", age: 44, id: 112, 
-            brief: "Землекоп. Подозревается в физическом выносе артефакта.",
-            full: "<b>ОПЕРАТИВНЫЕ ДАННЫЕ:</b> Замечен в туннелях под Мусульманским кварталом. <br><br><b>УЛИКА:</b> Татуировка на руке содержит формулу координат, завязанную на весе золота.",
-            unlocked: false
-        }
-    };
-
-    let currentStep = 1;
-
-    function init() {
-        const list = document.getElementById('suspects-list');
-        list.innerHTML = "";
-        for(let key in db) {
-            const div = document.createElement('div');
-            div.className = 'suspect-thumb';
-            div.innerHTML = `<b>${db[key].name}</b><br><small>${db[key].brief}</small> ${db[key].unlocked ? '<span class="update-flash">ОБНОВЛЕНО</span>' : ''}`;
-            div.onclick = () => openDossier(key);
-            list.appendChild(div);
-        }
-    }
-
-    function openDossier(key) {
-        const modal = document.getElementById('full-dossier');
-        const content = document.getElementById('dossier-content');
-        const p = db[key];
+    function nextStep(step) {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
         
-        content.innerHTML = `
-            <div class="dossier-grid">
-                <div class="photo-side">
-                    <div class="photo-placeholder">PHOTO: ${p.name.toUpperCase()}</div>
-                    <p><b>ID:</b> ${p.id}</p>
-                    <p><b>ВОЗРАСТ:</b> ${p.age}</p>
-                    <hr border-color="#333">
-                    <p style="color:var(--gold)">СТАТУС: ПОД НАБЛЮДЕНИЕМ</p>
-                </div>
-                <div class="info-side">
-                    <h1 style="color:var(--gold); margin-top:0;">ЛИЧНОЕ ДЕЛО: ${p.name}</h1>
-                    <div style="line-height:1.6; font-size:1.1em;">${p.full}</div>
-                </div>
-            </div>
-        `;
-        modal.style.display = 'block';
-    }
-
-    function closeDossier() {
-        document.getElementById('full-dossier').style.display = 'none';
-    }
-
-    function handleLogic() {
-        const val = document.getElementById('main-input').value;
-        const log = document.getElementById('log-content');
-
-        if(currentStep === 1 && val === "0.1368") {
-            currentStep = 2;
-            log.innerHTML += `<p style="color:var(--accent)">> <b>УСПЕХ:</b> Координаты X подтверждены. Абу Саид локализован в подвале дома #35.23.</p>`;
-            log.innerHTML += `<p>> <b>НОВЫЕ ДАННЫЕ:</b> Досье Сары Леви обновлено. Мы нашли её переписку.</p>`;
-            
-            // Обновляем досье Сары (она становится "полнее")
-            db.sara.unlocked = true;
-            db.sara.full += "<br><br><b style='color:red'>НОВОЕ:</b> Сара перевела 300,000 шекелей на офшорный счет Даниэля. Она знала о краже за неделю!";
-            init(); // Перерисовываем список
+        if (step === 'FinalA' || step === 'FinalB') {
+            const finalText = document.getElementById('final-text');
+            if (step === 'FinalA') {
+                finalText.innerText = "Вы выбрали путь реального Кастнера. Вы спасли 1684 человека, но история запомнила вас как человека, который скрыл правду от миллионов ради спасения единиц. Вы спасли жизни, но потеряли репутацию.";
+            } else {
+                finalText.innerText = "Вы выбрали путь героя, но в реальности этот путь не спас никого. Вы умерли с чистой совестью, но 1684 человека, которые могли бы выжить в «Поезде Кастнера», отправились в газовые камеры вместе со всеми.";
+            }
+            document.getElementById('step-Final').classList.add('active');
         } else {
-            alert("ДАННЫЕ НЕ СОВПАДАЮТ С АРХИВОМ IAA");
+            document.getElementById('step-' + step).classList.add('active');
         }
     }
 
-    init();
+    function choosePath(path) {
+        nextStep(path + '3');
+    }
 </script>
 
 </body>
